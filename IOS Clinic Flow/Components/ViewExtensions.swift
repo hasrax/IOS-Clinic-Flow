@@ -1,7 +1,23 @@
-//
-//  ViewExtensions.swift
-//  IOS Clinic Flow
-//
-//  Created by COBSCCOMP24.2P-023 on 2026-03-07.
-//
+import SwiftUI
+import UIKit
 
+// helper functions that acn  be caled in any view - a custom extension to round only specific corners
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
