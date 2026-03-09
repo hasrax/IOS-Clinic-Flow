@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "Femme patiente consultant avec un médecin à l'illustration vectorielle de l'hôpital Concept de cons.jpeg",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
