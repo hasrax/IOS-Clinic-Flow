@@ -336,7 +336,7 @@ struct LabTestCard: View {
 struct LabPaymentView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isLabFeeSelected = true //to see if the lab fee checkbox has selected or not 
-    @State private var selectedCard = 0
+    @State private var selectedCard = 0 // 0 = current card, 1 = new card
     @State private var showSuccess = false
     @State private var navTab: TabItem = .home
 
@@ -545,9 +545,9 @@ struct LabPaymentView: View {
     }
 }
 
-// MARK: - Lab Payment Success View
+// MARK: - Lab Payment Success
 struct LabPaymentSuccessView: View {
-    @State private var navigateHome = false
+    @State private var navigateHome = false //triggers navigation back to homeview
     @State private var navTab: TabItem = .home
 
     var body: some View {
