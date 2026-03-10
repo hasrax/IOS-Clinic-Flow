@@ -14,6 +14,15 @@ struct LoginView: View {
     @State private var showOTP      = false // Controls whether the OTP sheet should appear
     @State private var goBack       = false
     
+    var isValid: Bool { phoneNumber.filter { $0.isNumber }.count >= 10 }
+    
+    func validateAndSend() {
+            let digits = phoneNumber.filter { $0.isNumber }
+        // Check validation rules
+            if digits.isEmpty        { phoneError = "Please enter your mobile number" }
+            else if digits.count < 9 { phoneError = "Enter a valid mobile number (min 9 digits)" }
+            else                     { phoneError = ""; showOTP = true }
+        }
     
     var body: some View {
         if goBack {
