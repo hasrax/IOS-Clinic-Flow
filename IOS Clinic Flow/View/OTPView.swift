@@ -13,6 +13,23 @@ struct OTPView: View {
     @Binding var isPresented: Bool
     let onVerified: () -> Void
     
+    @State private var otpDigits  = ["", "", "", "", ""]
+    @State private var countdown  = 45
+    @State private var canResend  = false
+    @State private var otpError   = ""
+    @State private var shake      = false
+    @FocusState private var focusedIndex: Int?
+    
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Creates a timer that fires every 1 second
+
+        var isComplete: Bool { otpDigits.allSatisfy { $0.count == 1 } }
+
+        var maskedPhone: String {
+            let digits = phoneNumber.filter { $0.isNumber }
+            guard digits.count >= 4 else { return phoneNumber }
+            return "+94 *** **** \(String(digits.suffix(4)))"
+        }
+    
     
     var body: some View {
         ZStack {
