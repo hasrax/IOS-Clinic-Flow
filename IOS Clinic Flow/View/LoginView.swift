@@ -53,8 +53,8 @@ struct LoginView: View {
                     Image("logo")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 160)
-                        .padding(.top, 28)
+                        .frame(width: 250)
+                        .padding(.top, 7)
                     
                     Spacer()
                 }
@@ -209,7 +209,31 @@ struct LoginView: View {
         
         }
     
-    
+    @ViewBuilder
+        private func socialCircleBtn(icon: String, isSystem: Bool) -> some View {
+            Button { } label: {
+                ZStack {
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 58, height: 58)
+                        .overlay(Circle().stroke(Color(hex: "D8DCE6"), lineWidth: 1.5))
+                        .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
+                    if isSystem {
+                        // Apple logo
+                        Image(systemName: "apple.logo")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(Color(hex: "1B3A6B"))
+                    } else {
+                        // Google logo
+                        Image("google")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+        }
     
         
     }
