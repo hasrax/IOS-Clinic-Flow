@@ -30,6 +30,19 @@ struct OTPView: View {
             return "+94 *** **** \(String(digits.suffix(4)))"
         }
     
+    func verifyOTP() {
+            let code = otpDigits.joined() // Joins all OTP boxes into one string
+            if code.count < 5 {
+                otpError = "Please enter all 5 digits"
+                withAnimation(.default) { shake = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { shake = false }
+            } else {
+                otpError = ""
+                isPresented = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { onVerified() }
+            }
+        }
+    
     
     var body: some View {
         ZStack {
