@@ -1,9 +1,3 @@
-//
-//  IOS_GRP_CWApp.swift
-//  IOS GRP CW
-//
-//  Created by COBSCCOMP24.2P-023 on 2026-02-26.
-//
 
 import SwiftUI
 
@@ -11,7 +5,7 @@ import SwiftUI
 struct IOS_GRP_CWApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
         }
     }
 }
