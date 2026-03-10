@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-// MARK: - Mock Data
+// MARK: - Mock Data for the companions
 private let mockCareForList: [CareForPerson] = [
     CareForPerson(
         id: 1, name: "Amal Perera", relation: "Father", age: 64,
@@ -47,8 +47,8 @@ private let mockMyCompanions: [MyCompanion] = [
     )
 ]
 
-// MARK: - Companion View
 struct CompanionView: View {
+    //build dismiss action to work back button
     @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: CompanionTab = .iCareFor
     @State private var showAddCompanion = false
@@ -58,16 +58,17 @@ struct CompanionView: View {
     @State private var showQueueView = false
     @State private var navTab: TabItem = .home
 
-    //to track the status in the screen to see which is active 
+    //to track the active tab
     enum CompanionTab { case iCareFor, myCompanions, pending }
 
     var body: some View {
+        //zstack layers the grey background
         NavigationStack {
             ZStack {
                 Color(hex: "F0F2F5").ignoresSafeArea()
-
+                //spacing stcks the nav bar , scrolling area and tab bar with gaps
                 VStack(spacing: 0) {
-                    // NavBar
+                    // NavBar with plus button for add companion one
                     HStack {
                         Button { dismiss() } label: {
                             Image(systemName: "chevron.left")
@@ -82,6 +83,7 @@ struct CompanionView: View {
                         Button {
                             showAddCompanion = true
                         } label: {
+                            //wrapped in this for rounded borders
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
                                     .stroke(Color.borderMedium, lineWidth: 1)
@@ -98,13 +100,11 @@ struct CompanionView: View {
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 16) {
-                            // Info Banner
+                    
                             infoBanner
 
-                            // Tab Pills
                             tabPills
 
-                            // Tab Content
                             switch selectedTab {
                             case .iCareFor: iCareForContent
                             case .myCompanions: myCompanionsContent
@@ -120,6 +120,7 @@ struct CompanionView: View {
             }
             .ignoresSafeArea(edges: .bottom)
             .navigationBarHidden(true)
+            //to show alerts screen- naviagtions to other screens
             .navigationDestination(isPresented: $showAlertsView) {
                 if let person = navigateToAlerts {
                     CompanionAlertsView(person: person)
@@ -139,8 +140,7 @@ struct CompanionView: View {
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
-    // MARK: Info Banner
-    /// Blue info banner at the top of the screen explaining the companion feature.
+    // MARK: blue banner
     private var infoBanner: some View {
         HStack(spacing: 14) {
             ZStack {
@@ -168,19 +168,19 @@ struct CompanionView: View {
     }
 
     // MARK: Tabs
-    /// Segmented pill tab bar with three options: "I Care For", "My Companions", and "Pending" (with a red badge).
     private var tabPills: some View {
         HStack(spacing: 0) {
             tabPill(title: "I Care For", tab: .iCareFor)
             tabPill(title: "My Companions", tab: .myCompanions)
             tabPillPending
         }
-        .padding(4)
+        .padding(4)// to not touch container
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
     }
 
+    //this is to show the functions of tab pills
     private func tabPill(title: String, tab: CompanionTab) -> some View {
         Button { selectedTab = tab } label: {
             Text(title)
@@ -190,8 +190,8 @@ struct CompanionView: View {
                 .padding(.vertical, 9)
                 .background(
                     selectedTab == tab
-                        ? AnyView(LinearGradient.primaryGradient)
-                        : AnyView(Color.clear)
+                        ? AnyView(LinearGradient.primaryGradient)//active
+                        : AnyView(Color.clear)//inactive
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 9))
         }
@@ -223,10 +223,7 @@ struct CompanionView: View {
         }
     }
 
-    // MARK: I Care For Content
-    /// Shows cards for each person the user monitors (e.g. elderly parents).
-    /// Each card has avatar, conditions, live queue bar (if active), phone, last visit,
-    /// and action buttons: Call, Track Queue, Alerts, Book.
+    // MARK: I Care For part
     private var iCareForContent: some View {
         VStack(spacing: 14) {
             ForEach(mockCareForList) { person in
@@ -234,7 +231,8 @@ struct CompanionView: View {
             }
         }
     }
-
+    
+    //card design
     private func careForCard(person: CareForPerson) -> some View {
         VStack(spacing: 0) {
             // Top section
@@ -282,7 +280,6 @@ struct CompanionView: View {
                     }
                 }
 
-                // Queue bar or no appointments
                 if let queue = person.queueData {
                     Button {
                         navigateToQueue = person
@@ -392,8 +389,6 @@ struct CompanionView: View {
     }
 
     // MARK: My Companions Content
-    /// Shows cards for companions who monitor the current user's visits.
-    /// Each card lists their permissions and a "Remove" option.
     private var myCompanionsContent: some View {
         VStack(spacing: 14) {
             ForEach(mockMyCompanions) { companion in
@@ -763,5 +758,4 @@ struct AddCompanionSheet: View {
         }
     }
 }
-
 
