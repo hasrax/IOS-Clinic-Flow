@@ -243,3 +243,35 @@ struct OTPView: View {
             .onAppear { focusedIndex = 0 }
         }
 }
+
+//separate reusable OTP input box component.
+struct SingleOTPBox: View {
+    @Binding var digit: String
+    let isFocused: Bool
+    var hasError: Bool = false
+    let onChanged: (String) -> Void
+
+    var body: some View {
+        TextField("", text: $digit)
+            .font(.custom("Inter_18pt-Bold", size: 22))
+            .foregroundColor(hasError ? .errorRed : Color.textPrimary)
+            .multilineTextAlignment(.center)
+            .keyboardType(.numberPad)
+            .frame(maxWidth: .infinity)
+            .frame(height: 60)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(hasError ? Color.errorTint : Color.primaryBlueTint)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(
+                        hasError  ? Color.errorRed :
+                        isFocused ? Color.primaryBlue : Color.borderLight,
+                        lineWidth: 1.5
+                    )
+            )
+            
+            .onChange(of: digit) { _, newValue in onChanged(newValue) }
+    }
+}
