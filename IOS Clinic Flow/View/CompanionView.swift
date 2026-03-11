@@ -47,6 +47,7 @@ private let mockMyCompanions: [MyCompanion] = [
     )
 ]
 
+//outer frame with backgrounds and nav bars
 struct CompanionView: View {
     //build dismiss action to work back button
     @Environment(\.dismiss) private var dismiss
@@ -140,7 +141,7 @@ struct CompanionView: View {
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
-    // MARK: blue banner
+    // MARK: blue info banner
     private var infoBanner: some View {
         HStack(spacing: 14) {
             ZStack {
@@ -477,7 +478,7 @@ struct CompanionView: View {
         .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
     }
 
-    // MARK: Pending Content
+    // MARK: Pending Tab
     private var pendingContent: some View {
         VStack(spacing: 14) {
             pendingInviteCard(
@@ -571,6 +572,7 @@ struct CompanionView: View {
 }
 
 // MARK: - Add Companion Sheet
+//bottoon sliding sheet to add new companions
 struct AddCompanionSheet: View {
     @Binding var isPresented: Bool
     @State private var fullName = ""
@@ -608,7 +610,7 @@ struct AddCompanionSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
-                    // Full Name
+                    // name entering section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Full Name")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -622,7 +624,7 @@ struct AddCompanionSheet: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // Phone Number
+                    // contact number entering section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Phone Number")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -637,7 +639,7 @@ struct AddCompanionSheet: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // Relationship
+                    // Relationship two boxes
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Relationship")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -671,7 +673,7 @@ struct AddCompanionSheet: View {
                         }
                     }
 
-                    // Link Type
+                    // Link cards
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Link Type")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -692,7 +694,7 @@ struct AddCompanionSheet: View {
                         }
                     }
 
-                    // Permissions
+                    // read only permissions
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Permissions")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -711,7 +713,7 @@ struct AddCompanionSheet: View {
                         }
                     }
 
-                    // Send Button
+                    // Button
                     Button {
                         isPresented = false
                     } label: {
@@ -731,6 +733,7 @@ struct AddCompanionSheet: View {
         .background(Color(hex: "F0F2F5"))
     }
 
+    //link type selection
     private func linkTypeCard(icon: String, title: String, subtitle: String, type: LinkType) -> some View {
         Button { linkType = type } label: {
             VStack(spacing: 8) {
