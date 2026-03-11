@@ -38,6 +38,13 @@ struct CompanionQueueData {
     let steps: [VisitStep]
 }
 
+struct VisitStep {
+    enum Status { case done, active, pending }
+    let label: String
+    let status: Status
+    let estimatedTime: String
+}
+
 // MARK: - Care For Person
 // this is the data of the person that logged-in user monitoring
 struct CareForPerson: Identifiable {
