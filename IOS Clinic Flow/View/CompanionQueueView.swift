@@ -7,7 +7,16 @@
 
 import SwiftUI
 
-// MARK: - Companion Queue
+// MARK: - Companion Queue model structure
+private struct CQStep {
+    let title: String
+    let date: String
+    let timeLabel: String
+    let timeColor: Color
+    let state: State
+    enum State { case done, active, pending }
+}
+
 //tht curved part
 private struct CQCurvedShape: Shape {
     func path(in rect: CGRect) -> Path {
@@ -24,16 +33,7 @@ private struct CQCurvedShape: Shape {
     }
 }
 
-// MARK: - Companion Queue model structure
-private struct CQStep {
-    let title: String
-    let date: String
-    let timeLabel: String
-    let timeColor: Color
-    let state: State
-    enum State { case done, active, pending }
-}
-
+//data for the companion queue
 struct CompanionQueueView: View {
     @Environment(\.dismiss) private var dismiss
     let person: CareForPerson
@@ -62,11 +62,11 @@ struct CompanionQueueView: View {
             VStack(spacing: 0) {
                 if let queue = person.queueData {
                     ScrollView(showsIndicators: false) {
+                        //scrollable contents goes
                         VStack(spacing: 0) {
 
-                            // ── Header content ──
                             VStack(spacing: 0) {
-                                // Live indicator + booking ref
+                                //live indicator
                                 HStack {
                                     HStack(spacing: 6) {
                                         Image(systemName: "antenna.radiowaves.left.and.right")
@@ -98,7 +98,7 @@ struct CompanionQueueView: View {
                                 .padding(.horizontal, 24)
                                 .padding(.bottom, 24)
 
-                                // Queue circle
+                                // the circle that shows queue
                                 ZStack {
                                     Circle()
                                         .stroke(Color.white.opacity(0.15), lineWidth: 10)
@@ -125,7 +125,7 @@ struct CompanionQueueView: View {
                                 }
                                 .padding(.bottom, 24)
 
-                                // Time + Location
+                                // Time/Location
                                 HStack(spacing: 28) {
                                     HStack(spacing: 6) {
                                         Image(systemName: "clock.fill")
@@ -147,7 +147,7 @@ struct CompanionQueueView: View {
                                 .padding(.bottom, 40)
                             }
 
-                            // ── Visit Progress ──
+                            // Visit Progress
                             VStack(alignment: .leading, spacing: 16) {
                                 Text("Visit Progress")
                                     .font(.custom("Inter_18pt-Bold", size: 20))
@@ -164,7 +164,7 @@ struct CompanionQueueView: View {
                         }
                     }
 
-                    // ── Bottom bar ──
+                    // Bottom bar
                     VStack(spacing: 0) {
                         Rectangle()
                             .fill(Color.surfaceMuted)
@@ -189,7 +189,7 @@ struct CompanionQueueView: View {
                         BottomTabBar(selectedTab: $navTab)
                     }
                 } else {
-                    // No queue data – still show bottom bar
+                    // No queue data, still show bottom bar
                     Spacer()
                     VStack(spacing: 12) {
                         Image(systemName: "person.crop.circle.badge.clock")
@@ -241,25 +241,30 @@ struct CompanionQueueView: View {
 // MARK: - CQ Step Card
 
 private struct CQStepCard: View {
-    let step: CQStep  // the step data to render
+    let step: CQStep
 
     var body: some View {
         HStack(spacing: 14) {
+            //state icon
             ZStack {
                 switch step.state {
                 case .done:
+                    //green circle with the checkmark
                     Circle().fill(Color.successGreen).frame(width: 38, height: 38)
                     Image(systemName: "checkmark")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white)
                 case .active:
+                    //blue circle with white dot
                     Circle().fill(Color.primaryBlue).frame(width: 38, height: 38)
                     Circle().fill(Color.white).frame(width: 12, height: 12)
                 case .pending:
+                    //grey circle
                     Circle().stroke(Color(hex: "D1D5DB"), lineWidth: 2).frame(width: 38, height: 38)
                 }
             }
 
+            //title
             VStack(alignment: .leading, spacing: 6) {
                 Text(step.title)
                     .font(.custom("Inter_18pt-SemiBold", size: 14))
@@ -267,7 +272,7 @@ private struct CQStepCard: View {
                         step.state == .done   ? .successGreen :
                         step.state == .active ? .primaryBlue  : .textPrimary
                     )
-
+                //date
                 HStack(spacing: 18) {
                     HStack(spacing: 5) {
                         Image(systemName: "calendar")
@@ -275,6 +280,7 @@ private struct CQStepCard: View {
                         Text(step.date)
                             .font(.custom("Inter_18pt-Regular", size: 12)).foregroundColor(.textSecondary)
                     }
+                    //time
                     HStack(spacing: 5) {
                         Image(systemName: "clock")
                             .font(.system(size: 11)).foregroundColor(.textTertiary)
