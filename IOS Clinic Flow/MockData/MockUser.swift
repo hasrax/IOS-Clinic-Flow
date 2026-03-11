@@ -1,9 +1,9 @@
 import Foundation
 
-<<<<<<< HEAD
+
 //these are the data using for companion, notifications, and also the current profile
-=======
->>>>>>> lakindu-dev
+
+
 struct MockUser {
     static let current = Patient(
         name: "Malini Hasra",
@@ -50,21 +50,16 @@ struct MockUser {
                 room: "Room 301, Floor 3", estimatedWait: "~25 min",
                 currentStep: "Waiting for consultation",
                 steps: [
-<<<<<<< HEAD
-                                    VisitStep(label: "Registration", status: .done, estimatedTime: "9:30 AM"),
-                                    VisitStep(label: "Vitals Check", status: .done, estimatedTime: "9:45 AM"),
-                                    VisitStep(label: "Consultation", status: .active, estimatedTime: "~10:00 AM"),
-                                    VisitStep(label: "Lab Tests", status: .pending, estimatedTime: "~10:30 AM"),
-                                    VisitStep(label: "Payment", status: .pending, estimatedTime: "~11:15 AM"),
-                                ]
-=======
+
+                    
+
                     VisitStep(label: "Registration", status: .done, estimatedTime: "9:30 AM"),
                     VisitStep(label: "Vitals Check", status: .done, estimatedTime: "9:45 AM"),
                     VisitStep(label: "Consultation", status: .active, estimatedTime: "~10:00 AM"),
                     VisitStep(label: "Lab Tests", status: .pending, estimatedTime: "~10:30 AM"),
                     VisitStep(label: "Payment", status: .pending, estimatedTime: "~11:15 AM"),
                 ]
->>>>>>> lakindu-dev
+
             ),
             alerts: [
                 CompanionAlert(id: 1, text: "Queue position changed to 5th", time: "5 min ago", type: "queue"),
@@ -83,7 +78,5 @@ struct MockUser {
         ),
     ]
 }
-<<<<<<< HEAD
-=======
+
 //detail;s about the users and stuff
->>>>>>> lakindu-dev
