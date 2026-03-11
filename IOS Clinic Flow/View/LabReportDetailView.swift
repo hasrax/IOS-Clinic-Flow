@@ -8,20 +8,19 @@
 import SwiftUI
 
 // MARK: - LabRow model
-// A single result row in the lab report table.
-// statusIcon and statusColor are pre-resolved SF Symbol + colour for display.
+//single rows
 private struct LabRow: Identifiable {
     let id = UUID()
     let test: String
     let result: String
     let reference: String
-    let statusIcon: String  //checkmark.circle.fill
+    let statusIcon: String  //ex: checkmark.circle.fill
     let statusColor: Color
 }
 
 struct LabReportDetailView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var navTab: TabItem = .home  // drives BottomTabBar; onChange triggers tab switch
+    @Environment(\.dismiss) private var dismiss// go back - dismiss action
+    @State private var navTab: TabItem = .home
 
     // mock data for the lab results to display
     private let labRows: [LabRow] = [
@@ -47,6 +46,7 @@ struct LabReportDetailView: View {
             VStack(spacing: 0) {
                 // Nav bar
                 HStack {
+                    //custom back button
                     Button { dismiss() } label: {
                         ZStack {
                             Circle()
@@ -65,6 +65,7 @@ struct LabReportDetailView: View {
                     Spacer()
                     Spacer().frame(width: 38)
                 }
+                //to keep the centered title
                 .padding(.horizontal, 20)
                 .padding(.vertical, 14)
                 .background(Color.appBackground)
@@ -152,7 +153,7 @@ struct LabReportDetailView: View {
                             .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.borderMedium, lineWidth: 1))
                             .padding(.horizontal, 16)
 
-                            // Legend
+                            // Legend- the items explaning the colors
                             HStack(spacing: 20) {
                                 legendDot(color: Color(hex: "22C55E"), label: "Normal")
                                 legendDot(color: Color(hex: "EF4444"), label: "Above Range")
@@ -231,8 +232,6 @@ struct LabReportDetailView: View {
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
-    /// Builds a small coloured circle + label pair for the results table legend row
-    /// (green = Normal, red = Above Range, amber = Below Range).
     private func legendDot(color: Color, label: String) -> some View {
         HStack(spacing: 5) {
             Circle()

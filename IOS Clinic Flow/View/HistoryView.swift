@@ -321,7 +321,7 @@ struct BookingHistoryCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                // Token + Status
+                // Token/Status
                 HStack {
                     HStack(spacing: 5) {
                         Image(systemName: "calendar")
@@ -347,14 +347,14 @@ struct BookingHistoryCard: View {
                         .foregroundColor(.textSecondary)
                 }
 
-                // Date + Time
+                // Date/Time
                 if let time = item.time {
                     Text("\(item.date) - \(time)")
                         .font(.custom("Inter_18pt-Regular", size: 12))
                         .foregroundColor(.textTertiary)
                 }
 
-                // Price + View Details
+                // Price/view Details
                 HStack {
                     Text("LKR \(item.amount.formatted())")
                         .font(.custom("Inter_18pt-Bold", size: 15))
