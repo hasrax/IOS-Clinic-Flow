@@ -1,10 +1,11 @@
 import Foundation
 
 struct Medication: Identifiable {
-    importlet id = UUID()
+    let id = UUID()
     let name: String
     let dosage: String
     let price: Int
+    let quantity: Int
     let prescribedBy: String
     let instructions: String
     let schedule: [String]

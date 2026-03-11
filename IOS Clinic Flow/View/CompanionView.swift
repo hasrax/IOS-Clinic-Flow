@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Combine
+internal import Combine
 
 // MARK: - Mock Data for the companions
 private let mockCareForList: [CareForPerson] = [
