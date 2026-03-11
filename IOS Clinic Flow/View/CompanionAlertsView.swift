@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-// MARK: - Companion Alerts
-
 struct CompanionAlertsView: View {
     @Environment(\.dismiss) private var dismiss
     let person: CareForPerson
-    @State private var navTab: TabItem = .home  // drives BottomTabBar; onChange triggers tab switch
+    @State private var navTab: TabItem = .home
 
     private func alertIcon(type: String) -> (String, Color) {
         switch type {
@@ -23,7 +21,7 @@ struct CompanionAlertsView: View {
         default: return ("bell.fill", .warningAmber)
         }
     }
-
+//background with nav bar
     var body: some View {
         ZStack {
             Color(hex: "F0F2F5").ignoresSafeArea()
@@ -45,7 +43,7 @@ struct CompanionAlertsView: View {
                             .foregroundColor(.textSecondary)
                     }
                     Spacer()
-                    // Spacer placeholder for symmetry
+                    
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16))
                         .opacity(0)
@@ -54,6 +52,7 @@ struct CompanionAlertsView: View {
                 .padding(.vertical, 14)
                 .background(Color(hex: "F0F2F5"))
 
+                //show and empty state
                 if person.alerts.isEmpty {
                     Spacer()
                     VStack(spacing: 12) {
@@ -83,7 +82,7 @@ struct CompanionAlertsView: View {
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
-    /// Renders a single alert notification card with a colour-coded icon, title, message, and timestamp.
+    // single row that shows the details
     private func alertCard(alert: CompanionAlert) -> some View {
         let (icon, color) = alertIcon(type: alert.type)
         return HStack(spacing: 14) {
