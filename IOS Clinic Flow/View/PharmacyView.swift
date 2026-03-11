@@ -7,21 +7,13 @@
 
 import SwiftUI
 
-// MARK: - PharmacyView
-// Pharmacy screen showing the patient's current and past medication orders.
-// Current tab: active prescription with selectable medications, quantity, and total.
-//   Pay button navigates through the payment flow.
-// Past Orders tab: history of collected orders with status badges.
-// Tapping a medication navigates to MedicationDetailView.
-// Accessed from the HomeView quick-action grid.
-
-// MARK: - Pharmacy Tab
+// MARK: - Tabs
 enum PharmacyTab: String, CaseIterable {
     case current     = "Current"
     case pastOrders  = "Past Orders"
 }
 
-// MARK: - Pharmacy Medication Item (for current order)
+//Pharmacy Medication Item model
 struct PharmacyMedItem: Identifiable {
     let id = UUID()
     let name: String
@@ -31,7 +23,7 @@ struct PharmacyMedItem: Identifiable {
     var isSelected: Bool = true
 }
 
-// MARK: - Past Pharmacy Order
+//Past Pharmacy Order model
 struct PastPharmacyOrder: Identifiable {
     let id: String
     let doctor: String
@@ -41,7 +33,7 @@ struct PastPharmacyOrder: Identifiable {
     let status: String   // "Collected"
 }
 
-// MARK: - PharmacyView
+//layout design
 struct PharmacyView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: PharmacyTab = .current
@@ -148,8 +140,6 @@ struct PharmacyView: View {
     }
 
     // MARK: - Current Tab
-    /// Shows the pharmacy token card, a 3-step preparation progress bar (Ordering/Preparing/Ready),
-    /// a list of selectable prescribed medications, and a bottom Pay bar.
     private var currentTabContent: some View {
         ZStack(alignment: .bottom) {
             ScrollView(showsIndicators: false) {
@@ -172,7 +162,7 @@ struct PharmacyView: View {
                     }
                     .padding(.horizontal, 20)
 
-                    // Progress stepper card
+                    // Progression card
                     VStack(spacing: 12) {
                         HStack(spacing: 0) {
                             // Step 1 — done
@@ -256,7 +246,7 @@ struct PharmacyView: View {
                                             .foregroundColor(.purpleAccent)
                                     }
 
-                                    // Name + dosage
+                                    // Name/dosage
                                     VStack(alignment: .leading, spacing: 3) {
                                         Text(medications[i].name)
                                             .font(.custom("Inter_18pt-SemiBold", size: 14))
@@ -338,8 +328,6 @@ struct PharmacyView: View {
     }
 
     // MARK: - Past Orders Tab
-    /// Shows previous collected pharmacy orders as white cards with a green accent bar.
-    /// Each card shows the order ID, doctor, item count, total cost, and a status badge.
     private var pastOrdersContent: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 14) {
@@ -416,11 +404,8 @@ struct PharmacyView: View {
     }
 
     // MARK: - Stepper Helpers
-    /// Three-state enum for the 3-step order preparation steps (Ordering → Preparing → Ready).
     private enum StepState { case done, active, pending }
-
-    /// Renders a circular step indicator with a label below.
-    /// done = filled green with checkmark, active = blue outlined with number, pending = grey outlined.
+    
     private func stepCircle(label: String, index: Int, state: StepState) -> some View {
         VStack(spacing: 6) {
             ZStack {
@@ -458,16 +443,14 @@ struct PharmacyView: View {
 }
 
 // MARK: - Pharmacy Payment View
-/// Full-screen payment screen for the selected pharmacy medications.
-/// Shows an outstanding total card, toggleable pharmacy fee row, and a saved card selector.
-/// Navigates to PharmacyPaymentSuccessView on confirm.
+
 struct PharmacyPaymentView: View {
     @Environment(\.dismiss) private var dismiss
-    let selectedTotal: Int    // Total price of selected medications in LKR
-    let selectedCount: Int    // Number of medications selected
-    @State private var isFeeSelected = true   // Whether the pharmacy fee row is checked
-    @State private var selectedCard = 0       // Index of the currently selected payment card
-    @State private var showSuccess = false    // Triggers navigation to success screen
+    let selectedTotal: Int
+    let selectedCount: Int
+    @State private var isFeeSelected = true
+    @State private var selectedCard = 0
+    @State private var showSuccess = false
     @State private var navTab: TabItem = .home
 
     var body: some View {
@@ -650,9 +633,7 @@ struct PharmacyPaymentView: View {
     }
 }
 
-// MARK: - Pharmacy Payment Success View
-/// Confirmation screen shown after pharmacy payment.
-/// Displays a curved gradient header with success icon, then a receipt card and "Go Home" button.
+// MARK: - Payment Success
 struct PharmacyPaymentSuccessView: View {
     let totalPaid: Int          // Final amount paid in LKR
     @State private var navigateHome = false  // Triggers navigation back to HomeView
@@ -688,7 +669,7 @@ struct PharmacyPaymentSuccessView: View {
                 Spacer()
             }
 
-            // Card + button
+            // Card/button
             VStack(spacing: 0) {
                 Spacer().frame(height: 230)
                 VStack(spacing: 16) {
@@ -793,8 +774,6 @@ struct PharmacyPaymentSuccessView: View {
 }
 
 // MARK: - Success Curve Shape
-/// Draws the curved bottom edge for the PharmacyPaymentSuccessView gradient header.
-/// Same curve style used in LabView and BookingSuccessView.
 private struct PharmacySuccessCurve: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()

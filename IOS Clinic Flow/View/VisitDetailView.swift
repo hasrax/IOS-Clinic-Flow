@@ -8,9 +8,7 @@
 import SwiftUI
 
 // MARK: - VisitDetailView
-// Detailed view for a single completed or cancelled appointment.
-// Shows the visit step timeline, itemised bill breakdown, and total cost.
-// Accessed from HistoryView by tapping a booking record.
+
 struct VisitDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navTab: TabItem = .home
@@ -113,7 +111,6 @@ struct VisitDetailView: View {
     }
 
     // MARK: - Total Cost Card
-    /// Blue gradient card showing the total visit cost and a "Paid" green pill badge.
     private var totalCostCard: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
@@ -141,7 +138,6 @@ struct VisitDetailView: View {
     }
 
     // MARK: - Doctor Info Card
-    /// White card showing doctor photo, name, specialty, status badge, and a 2×2 visit metadata grid.
     private var doctorInfoCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
@@ -192,7 +188,6 @@ struct VisitDetailView: View {
         )
     }
 
-    /// Renders a small icon + label + value cell used inside the doctorInfoCard metadata grid.
     private func visitInfoCell(icon: String, label: String, value: String) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: icon)
@@ -212,8 +207,7 @@ struct VisitDetailView: View {
     }
 
     // MARK: - Visit Steps Card
-    /// Shows all 5 visit steps (Registration, Consultation, Lab Tests, Pharmacy, Payment)
-    /// as a vertical list where all steps are shown as completed (all green check icons).
+
     private var visitStepsCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Visit Steps")
@@ -254,8 +248,8 @@ struct VisitDetailView: View {
         )
     }
 
-    // MARK: - Bill Breakdown Card
-    /// Itemised cost list showing each service charge and the total at the bottom.
+    // MARK: - Billing Card
+    //for each services
     private var billBreakdownCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Visit Steps")

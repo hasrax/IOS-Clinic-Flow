@@ -7,14 +7,7 @@
 
 import SwiftUI
 
-// MARK: - PrescriptionsView
-// Shows a list of all prescriptions issued to the patient,
-// filterable by status: All, Active, Completed, Expired.
-// Each card shows the doctor, date, medications, and refill count.
-// Accessed from Profile → My Prescriptions.
-
-// MARK: - PrescriptionRecord (local model)
-// Represents a single prescription record shown in the list.
+// MARK: - Prescription Record data model
 private struct PrescriptionRecord: Identifiable {
     let id = UUID()
     let doctor: String
@@ -25,6 +18,7 @@ private struct PrescriptionRecord: Identifiable {
     let status: String   // "Active" | "Completed" | "Expired"
 }
 
+//mock data for that
 private let mockRx: [PrescriptionRecord] = [
     PrescriptionRecord(doctor: "Dr. Samantha Perera",   specialty: "General Physician", date: "Feb 20, 2026",
                        medications: ["Amoxicillin 500mg", "Paracetamol 650mg"], refills: 2, status: "Active"),
@@ -36,14 +30,13 @@ private let mockRx: [PrescriptionRecord] = [
                        medications: ["Pregabalin 75mg"], refills: 0, status: "Expired"),
 ]
 
-/// Filter chip labels for the prescription status tabs.
+// tabs names
 private let rxFilters = ["All", "Active", "Completed", "Expired"]
 
 struct PrescriptionsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedFilter = "All"  // currently active filter tab
 
-    /// Prescriptions filtered by the selected status tab; returns all records when "All" is active.
     private var filtered: [PrescriptionRecord] {
         selectedFilter == "All" ? mockRx : mockRx.filter { $0.status == selectedFilter }
     }
@@ -53,7 +46,7 @@ struct PrescriptionsView: View {
             Color.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // ── NavBar ───────────────────────────────────────────
+              
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
@@ -71,7 +64,7 @@ struct PrescriptionsView: View {
                 .padding(.vertical, 14)
                 .background(Color.appBackground)
 
-                // ── Filter tabs ──────────────────────────────────────
+                
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
                         ForEach(rxFilters, id: \.self) { f in
@@ -90,7 +83,6 @@ struct PrescriptionsView: View {
                     .padding(.vertical, 10)
                 }
 
-                // ── Cards ────────────────────────────────────────────
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 14) {
                         ForEach(filtered) { rx in
