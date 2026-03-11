@@ -6,14 +6,9 @@
 //
 import SwiftUI
 
-// MARK: - HistoryView
-// The History tab (tab 3). Shows a filterable timeline of all past activity:
-// bookings, lab tests, pharmacy orders, and payments.
-// Filter chips at the top let the user narrow down by category.
-// Tapping a booking record navigates to VisitDetailView.
 
-// MARK: - Filter
-/// Filter options for the activity timeline chips shown below the summary card.
+// filter tab names for the cases
+
 enum HistoryFilter: String, CaseIterable {
     case all = "All"
     case bookings = "Bookings"
@@ -21,15 +16,12 @@ enum HistoryFilter: String, CaseIterable {
     case pharmacy = "Pharmacy"
 }
 
-// MARK: - History Item Type
-/// Categorises each history entry so the correct icon card style is used.
+//categorizations
 enum HistoryItemType {
     case booking, lab, pharmacy, payment
 }
 
-// MARK: - History Status
-/// Represents the outcome of a past activity and provides the corresponding
-/// display label, badge colour, background tint, and status icon.
+//shows the relevant sets to the activities
 enum HistoryStatus {
     case completed, cancelled, refunded
 
@@ -66,9 +58,7 @@ enum HistoryStatus {
     }
 }
 
-// MARK: - History Entry Model
-/// View-level model for a single row in the HistoryView list.
-/// Covers bookings, lab tests, pharmacy orders, and payment records.
+//history card data model
 struct HistoryEntry: Identifiable {
     let id = UUID()
     let type: HistoryItemType    // Used to determine which card style to render
@@ -82,12 +72,11 @@ struct HistoryEntry: Identifiable {
     var time: String? = nil      // Optional time shown for booking cards
 }
 
-// MARK: - HistoryView
 struct HistoryView: View {
     @ObservedObject private var router = AppRouter.shared
-    /// Currently selected filter chip (All / Bookings / Lab / Pharmacy).
+    //current selected tab
     @State private var selectedFilter: HistoryFilter = .all
-    /// Drives navigation to VisitDetailView when a booking card is tapped.
+    //navigation to visit detail card
     @State private var showVisitDetail = false
 
     private var tabBinding: Binding<TabItem> {
@@ -97,7 +86,7 @@ struct HistoryView: View {
         )
     }
 
-    // MARK: Mock Data
+    // MARK: Mock Data for the history view
     private let bookings: [HistoryEntry] = [
         HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
                      date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
@@ -173,7 +162,7 @@ struct HistoryView: View {
         }
     }
 
-    // MARK: - Summary Card
+    // MARK: - top blue summary Card
     private var summaryCard: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
@@ -228,7 +217,7 @@ struct HistoryView: View {
             .frame(width: 1, height: 36)
     }
 
-    // MARK: - Filter Tabs
+    // MARK: - Filter Tabs withe the design
     private var filterTabs: some View {
         HStack(spacing: 8) {
             ForEach(HistoryFilter.allCases, id: \.self) { filter in
@@ -258,7 +247,7 @@ struct HistoryView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - Content List
+    // Contents for the tab views
     @ViewBuilder
     private var contentList: some View {
         switch selectedFilter {
@@ -310,9 +299,7 @@ struct HistoryView: View {
 }
 
 // MARK: - Booking History Card
-/// White card with a green left accent bar for completed/cancelled booking records.
-/// Shows token number, status badge, doctor name, specialty, date/time, and cost.
-/// "View Details" button triggers onViewDetails() which navigates to VisitDetailView.
+//the card that holds all the info with accent bars and stauses
 struct BookingHistoryCard: View {
     let item: HistoryEntry
     let onViewDetails: () -> Void
@@ -393,13 +380,11 @@ struct BookingHistoryCard: View {
     }
 }
 
-// MARK: - Icon History Card (Lab / Pharmacy / Payment)
-/// Generic history card used for lab, pharmacy, and payment records.
-/// Renders a circular gradient icon on the left with title, reference, doctor, and cost.
+// MARK: - general History Card (Lab / Pharmacy / Payment)
+
 struct IconHistoryCard: View {
     let item: HistoryEntry
-
-    /// Returns the appropriate SF Symbol name based on the item type.
+    
     private var iconName: String {
         switch item.type {
         case .lab:      return "flask.fill"
@@ -421,7 +406,7 @@ struct IconHistoryCard: View {
                     .foregroundColor(.white)
             }
 
-            // Info
+            // Infomation properties with text fonts
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)
                     .font(.custom("Inter_18pt-Bold", size: 14))
@@ -439,7 +424,7 @@ struct IconHistoryCard: View {
 
             Spacer()
 
-            // Status badge (top aligned)
+            // Status badge aligned in the top
             VStack {
                 HistoryStatusBadge(status: item.status)
                 Spacer()
@@ -456,8 +441,7 @@ struct IconHistoryCard: View {
 }
 
 // MARK: - History Status Badge
-/// Small coloured pill badge (icon + label) rendered right-aligned on history cards.
-/// Colour and icon are sourced from the HistoryStatus enum computed properties.
+//this is reusable by just passing its values - design
 struct HistoryStatusBadge: View {
     let status: HistoryStatus
 
