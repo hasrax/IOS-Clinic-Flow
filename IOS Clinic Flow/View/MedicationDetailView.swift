@@ -7,26 +7,23 @@
 
 import SwiftUI
 
-// MARK: - MedicationDetailView
-// Detailed view for a single dispensed medication from a pharmacy order.
-// Shows dosage instructions, daily schedule, and safety warnings.
-// Accessed from PharmacyView by tapping a medication card.
+
 struct MedicationDetailView: View {
     @Environment(\.dismiss) private var dismiss
     let medication: PharmacyMedItem
     @State private var navTab: TabItem = .home  // drives BottomTabBar; onChange triggers tab switch
 
-    /// General taking instructions displayed in the "Instructions" card.
+    //General instructions that display
     private let instructions = [
         "Take after meals. Complete the full course even if you feel better."
     ]
-    /// Per-meal schedule entries shown in the "Daily Schedule" card.
+    
     private let dailySchedule = [
         "Morning — After breakfast",
         "Afternoon — After lunch",
         "Night — After dinner"
     ]
-    /// Safety alert bullet points shown in the "Warnings" card.
+   
     private let warnings = [
         "Do not consume alcohol while taking this medication.",
         "Store in a cool, dry place away from sunlight.",
@@ -88,14 +85,14 @@ struct MedicationDetailView: View {
                         }
                         .padding(.horizontal, 16)
 
-                        // Quantity | Price
+                        // Quantity/Price
                         HStack(spacing: 12) {
                             statCard(label: "QUANTITY", value: "\(medication.qty)", valueColor: .primaryBlue)
                             statCard(label: "PRICE", value: "LKR \(medication.price)", valueColor: .primaryBlue)
                         }
                         .padding(.horizontal, 16)
 
-                        // Prescribed By / Date
+                        // Prescribed By/Date
                         VStack(alignment: .leading, spacing: 12) {
                             labeledField(label: "Prescribed By", value: "Dr. Samantha Perera")
                             Divider()
@@ -109,7 +106,7 @@ struct MedicationDetailView: View {
                         )
                         .padding(.horizontal, 16)
 
-                        // Instructions (amber)
+                        // Instructions
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Instructions")
                                 .font(.custom("Inter_18pt-Bold", size: 14))
@@ -130,7 +127,7 @@ struct MedicationDetailView: View {
                         )
                         .padding(.horizontal, 16)
 
-                        // Daily schedule
+                        // Daily schedule card
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Daily Schedule")
                                 .font(.custom("Inter_18pt-Bold", size: 14))
@@ -190,8 +187,7 @@ struct MedicationDetailView: View {
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
-    /// Builds a centred statistic tile showing a label (caps) and a coloured value.
-    /// Used for the Quantity and Price stat pair below the header card.
+
     private func statCard(label: String, value: String, valueColor: Color) -> some View {
         VStack(spacing: 8) {
             Text(label)
@@ -211,7 +207,7 @@ struct MedicationDetailView: View {
         )
     }
 
-    /// Builds a stacked label-value pair used in the Prescribed By / Date card.
+
     private func labeledField(label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)

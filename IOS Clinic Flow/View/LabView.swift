@@ -238,7 +238,7 @@ struct LabTestCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                // ID with the status
+                // ID plus status
                 HStack {
                     Text(item.labId)
                         .font(.custom("Inter_18pt-Bold", size: 13))
