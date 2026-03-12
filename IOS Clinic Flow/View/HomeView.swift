@@ -6,8 +6,9 @@ final class AppRouter: ObservableObject {
     private init() {}
     @Published var isLoggedIn: Bool = false
     @Published var pendingTab: TabItem? = nil
-    /// The tab currently visible in RootView — used to sync BottomTabBar highlights.
     @Published var activeTab: TabItem = .home
+    @Published var loggedInPhone: String = ""
+    @Published var isNewUser: Bool = false
 }
 
 struct HomeView: View {
@@ -21,6 +22,9 @@ struct HomeView: View {
     @State private var showCompanion = false
     @State private var showQueueStatus = false
     @State private var showPayment = false
+    @State private var showEditProfile = false
+    @State private var newUserName = ""
+    @State private var newUserPhone = ""
 //Boolean Flags which are user to navigate to different places when toggled to true
     init(isReturningUser: Bool = false) {
         _isFirstUser = State(initialValue: !isReturningUser)
@@ -46,10 +50,11 @@ struct HomeView: View {
                                 FirstUserContent(
                                     isFirstUser: $isFirstUser,
                                     showBookingSearch: $showBookingSearch,
-                                    onMap: { isFirstUser = false; showMap = true },
-                                    onLab: { isFirstUser = false; showLab = true },
-                                    onPharmacy: { isFirstUser = false; showPharmacy = true },
-                                    onCompanion: { isFirstUser = false; showCompanion = true }
+                                    showEditProfile: $showEditProfile,
+                                    onMap: { showMap = true },
+                                    onLab: { showLab = true },
+                                    onPharmacy: { showPharmacy = true },
+                                    onCompanion: { showCompanion = true }
                                 )
                             } else {
                                 ReturningUserContent(
@@ -100,8 +105,16 @@ struct HomeView: View {
                     doctor: MockDoctors.all[0],
                     selectedDate: Date(),
                     selectedTimeSlot: TimeSlot(time: "8.30 AM", bookedCount: 3, maxCount: 8),
-                    totalAmount: 1600 //hardcoded data due to only having a front end we will change if if required later xxxx
+                    totalAmount: 1600
                 )
+            }
+            .navigationDestination(isPresented: $showEditProfile) {
+                EditProfileView(name: $newUserName, phone: $newUserPhone)
+            }
+            .onAppear {
+                if AppRouter.shared.isNewUser && newUserPhone.isEmpty {
+                    newUserPhone = "+94 \(AppRouter.shared.loggedInPhone)"
+                }
             }
             .onChange(of: selectedTab) { _, newTab in
                 if newTab != .home {
@@ -116,27 +129,44 @@ struct HomeView: View {
 // MARK: - Header (both screens)
 struct HomeHeaderView: View {
     @Binding var showNotifications: Bool
-    
+    @ObservedObject private var router = AppRouter.shared
+
     var body: some View {
         HStack(spacing: 12) {
-            // Avatar
-            Image("malini_avatar")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 46, height: 46)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(Color.white, lineWidth: 2)
-                )
+            if router.isNewUser {
+                Circle()
+                    .fill(Color(hex: "D8DCE6"))
+                    .frame(width: 46, height: 46)
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(Color(hex: "8A93A6"))
+                    )
+            } else {
+                Image("malini_avatar")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 46, height: 46)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 2)
+                    )
+            }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Good Morning")
                     .font(.custom("Inter_18pt-Regular", size: 13))
                     .foregroundColor(.textSecondary)
-                Text("Malini Perera")
-                    .font(.custom("Inter_18pt-Bold", size: 16))
-                    .foregroundColor(.textPrimary)
+                if router.isNewUser {
+                    Text("+94 \(router.loggedInPhone)")
+                        .font(.custom("Inter_18pt-Bold", size: 16))
+                        .foregroundColor(.textPrimary)
+                } else {
+                    Text("Malini Perera")
+                        .font(.custom("Inter_18pt-Bold", size: 16))
+                        .foregroundColor(.textPrimary)
+                }
             }
 
             Spacer()
@@ -163,6 +193,7 @@ struct HomeHeaderView: View {
 struct FirstUserContent: View {
     @Binding var isFirstUser: Bool
     @Binding var showBookingSearch: Bool
+    @Binding var showEditProfile: Bool
     var onMap: () -> Void = {}
     var onLab: () -> Void = {}
     var onPharmacy: () -> Void = {}
@@ -184,7 +215,6 @@ struct FirstUserContent: View {
 //yap about the user
                     // White book button
                     Button {
-                        isFirstUser = false
                         showBookingSearch = true
                     } label: {
                         HStack(spacing: 8) {
@@ -210,8 +240,8 @@ struct FirstUserContent: View {
     //This shows the 6 quock actions buttons but with some options closed sincethis is for the first user
             QuickActionsGrid(
                 firstUserMode: true,
-                onBookNow: { isFirstUser = false; showBookingSearch = true },
-                onCompanion: { isFirstUser = false; onCompanion() }
+                onBookNow: { showBookingSearch = true },
+                onCompanion: { onCompanion() }
             )
             .padding(.bottom, 24)
 
@@ -222,33 +252,35 @@ struct FirstUserContent: View {
                     .foregroundColor(.textPrimary)
                     .padding(.horizontal, 20)
 
-                WhiteCard(cornerRadius: 16, padding: 16) {
-                    HStack(spacing: 14) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(hex: "E5E7EB"))
-                                .frame(width: 42, height: 42)
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 18))
-                                .foregroundColor(.textSecondary)
-                        }
-//helps complete ur profile
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Complete Your Profile")
-                                .font(.custom("Inter_18pt-Bold", size: 15))
-                                .foregroundColor(.textPrimary)
-                            Text("Add allergies, weight, height and\nemergency contact")
-                                .font(.custom("Inter_18pt-Regular", size: 12))
-                                .foregroundColor(.textSecondary)
-                        }
+                Button { showEditProfile = true } label: {
+                    WhiteCard(cornerRadius: 16, padding: 16) {
+                        HStack(spacing: 14) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(hex: "E5E7EB"))
+                                    .frame(width: 42, height: 42)
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.textSecondary)
+                            }
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Complete Your Profile")
+                                    .font(.custom("Inter_18pt-Bold", size: 15))
+                                    .foregroundColor(.textPrimary)
+                                Text("Add allergies, weight, height and\nemergency contact")
+                                    .font(.custom("Inter_18pt-Regular", size: 12))
+                                    .foregroundColor(.textSecondary)
+                            }
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.textTertiary)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.textTertiary)
+                        }
                     }
                 }
+                .buttonStyle(.plain)
                 .padding(.horizontal, 20)
             }
             .padding(.bottom, 24)
