@@ -86,33 +86,30 @@ struct PaymentView: View {
                     VStack(spacing: 20) {
 
                     
-                        // summary card — clean white
-                        VStack(spacing: 6) {
-                            Text("TOTAL OUTSTANDING")
-                                .font(.custom("Inter_18pt-SemiBold", size: 11))
-                                .foregroundColor(.textSecondary)
-                                .tracking(1.4)
-                            Text("LKR \(formattedAmount(selectedTotal))")
-                                .font(.custom("Inter_18pt-Black", size: 38))
-                                .foregroundColor(.textPrimary)
-                            HStack(spacing: 6) {
-                                Circle()
-                                    .fill(Color.primaryBlue)
-                                    .frame(width: 6, height: 6)
-                                Text("\(selectedCount) item\(selectedCount == 1 ? "" : "s") selected")
-                                    .font(.custom("Inter_18pt-Regular", size: 12))
-                                    .foregroundColor(.textTertiary)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 24)
-                        .background(Color.white)
-                        .cornerRadius(16)
-                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-                        .overlay(
+                        // summary card — gradient
+                        ZStack {
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.surfaceMuted, lineWidth: 1)
-                        )
+                                .fill(LinearGradient.primaryGradientDeep)
+                            VStack(spacing: 8) {
+                                Text("TOTAL OUTSTANDING")
+                                    .font(.custom("Inter_18pt-SemiBold", size: 12))
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .tracking(1.5)
+                                Text("LKR \(formattedAmount(selectedTotal))")
+                                    .font(.custom("Inter_18pt-Black", size: 34))
+                                    .foregroundColor(.white)
+                                HStack(spacing: 6) {
+                                    Circle()
+                                        .fill(Color.white.opacity(0.5))
+                                        .frame(width: 5, height: 5)
+                                    Text("\(selectedCount) item\(selectedCount == 1 ? "" : "s") selected")
+                                        .font(.custom("Inter_18pt-Regular", size: 12))
+                                        .foregroundColor(.white.opacity(0.75))
+                                }
+                            }
+                            .padding(.vertical, 28)
+                            .frame(maxWidth: .infinity)
+                        }
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
 
@@ -304,8 +301,7 @@ struct PaymentView: View {
             .cornerRadius(14)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(item.isSelected ? Color.primaryBlue.opacity(0.4) : Color.surfaceMuted,
-                            lineWidth: item.isSelected ? 1.5 : 1)
+                    .stroke(Color.surfaceMuted, lineWidth: 1)
             )
         }
     }
