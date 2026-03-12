@@ -76,7 +76,7 @@ struct AddCardView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Add Card")

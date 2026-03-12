@@ -17,22 +17,6 @@ private struct QueueStep {
     enum StepState { case done, active, pending }
 }
 
-// MARK: - Curved bottom shape
-private struct QueueCurvedShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: .zero)
-        path.addLine(to: CGPoint(x: rect.maxX, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - 60))
-        path.addQuadCurve(
-            to: CGPoint(x: 0, y: rect.maxY - 60),
-            control: CGPoint(x: rect.midX, y: rect.maxY + 50)
-        )
-        path.closeSubpath()
-        return path
-    }
-}
-
 struct QueueStatusView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navTab: TabItem = .home
@@ -51,18 +35,31 @@ struct QueueStatusView: View {
             //for all child components to start from the top insread of center
             Color.appBackground.ignoresSafeArea()
 
-            // Blue curved header background
-            LinearGradient.primaryGradient
-                .clipShape(QueueCurvedShape())
-                .frame(height: 380)
-                .ignoresSafeArea(edges: .top)
-
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
 
                         // ── Header info area ──
                         VStack(spacing: 0) {
+                            // Custom nav row
+                            HStack {
+                                Button { dismiss() } label: {
+                                    Image(systemName: "chevron.left")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundColor(.white)
+                                }
+                                Spacer()
+                                Text("Queue Status")
+                                    .font(.custom("Inter_18pt-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                // balance spacer so title stays centred
+                                Color.clear.frame(width: 24, height: 24)
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 60)
+                            .padding(.bottom, 8)
+
                             // a more detail and indepth version of the live status update that we pout in the home view
                             HStack {
                                 HStack(spacing: 6) {
@@ -143,8 +140,19 @@ struct QueueStatusView: View {
                                         .foregroundColor(.white.opacity(0.85))
                                 }
                             }
-                            .padding(.bottom, 40)
+                            .padding(.bottom, 28)
                         }
+                        .background(
+                            LinearGradient.primaryGradient
+                                .ignoresSafeArea(edges: .top)
+                                .clipShape(UnevenRoundedRectangle(
+                                    topLeadingRadius: 0,
+                                    bottomLeadingRadius: 28,
+                                    bottomTrailingRadius: 28,
+                                    topTrailingRadius: 0,
+                                    style: .continuous
+                                ))
+                        )
 
                         // progess of the visiti design
                         VStack(alignment: .leading, spacing: 16) {
@@ -162,6 +170,7 @@ struct QueueStatusView: View {
                         .padding(.bottom, 30)
                     }
                 }
+                .ignoresSafeArea(edges: .top)
 
                 // nav buttons on bottom bar
                 VStack(spacing: 0) {
@@ -180,25 +189,11 @@ struct QueueStatusView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .preferredColorScheme(.dark)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
         .navigationDestination(isPresented: $showMap) {
             ClinicMapView()
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Queue Status")
-                    .font(.custom("Inter_18pt-Bold", size: 18))
-                    .foregroundColor(.white)
-            }
         }
     }
 }

@@ -123,7 +123,7 @@ struct LabView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Laboratory")
@@ -364,7 +364,7 @@ struct LabPaymentView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Payments")
@@ -382,10 +382,7 @@ struct LabPaymentView: View {
                         // Outstanding amount card
                         ZStack {
                             RoundedRectangle(cornerRadius: 18)
-                                .fill(LinearGradient(
-                                    colors: [Color(hex: "059669"), Color(hex: "065F46")],
-                                    startPoint: .topLeading, endPoint: .bottomTrailing
-                                ))
+                                .fill(LinearGradient.primaryGradientDeep)
                             VStack(spacing: 8) {
                                 Text("TOTAL OUTSTANDING")
                                     .font(.custom("Inter_18pt-SemiBold", size: 11))

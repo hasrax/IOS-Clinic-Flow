@@ -39,7 +39,7 @@ struct BookingDetailsView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Schedule Visit")
@@ -324,7 +324,7 @@ struct DateSelectionSection: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     
                     Spacer()
