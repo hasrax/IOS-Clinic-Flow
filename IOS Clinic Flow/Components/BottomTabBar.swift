@@ -30,6 +30,7 @@ enum TabItem: Int, CaseIterable {
 struct BottomTabBar: View {
     @Binding var selectedTab: TabItem
     var isNeutral: Bool = false
+    var onNeutralTabTap: ((TabItem) -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -39,8 +40,12 @@ struct BottomTabBar: View {
                 Spacer(minLength: 0)
                 Button {
                     if isNeutral {
-                        AppRouter.shared.pendingTab = tab
-                        dismiss()
+                        if let onNeutralTabTap {
+                            onNeutralTabTap(tab)
+                        } else {
+                            AppRouter.shared.pendingTab = tab
+                            dismiss()
+                        }
                     } else {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.72)) {
                             selectedTab = tab

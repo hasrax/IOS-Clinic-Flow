@@ -35,7 +35,7 @@ struct AddCardView: View {
         guard !d.isEmpty else { return "**** **** **** ****" }
         let visible = d.suffix(4)
         let hidden  = String(repeating: "*", count: max(0, 16 - visible.count))
-        var raw = hidden + visible
+        let raw = hidden + visible
         var r = ""
         for (i, ch) in raw.enumerated() {
             if i != 0 && i % 4 == 0 { r += " " }

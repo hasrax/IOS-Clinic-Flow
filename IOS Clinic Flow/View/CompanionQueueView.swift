@@ -17,22 +17,6 @@ private struct CQStep {
     enum State { case done, active, pending }
 }
 
-//tht curved part
-private struct CQCurvedShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: .zero)
-        path.addLine(to: CGPoint(x: rect.maxX, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - 60))
-        path.addQuadCurve(
-            to: CGPoint(x: 0, y: rect.maxY - 60),
-            control: CGPoint(x: rect.midX, y: rect.maxY + 50)
-        )
-        path.closeSubpath()
-        return path
-    }
-}
-
 //data for the companion queue
 struct CompanionQueueView: View {
     @Environment(\.dismiss) private var dismiss
@@ -53,19 +37,35 @@ struct CompanionQueueView: View {
         ZStack(alignment: .top) {
             Color.appBackground.ignoresSafeArea()
 
-            // Blue curved header
-            LinearGradient.primaryGradient
-                .clipShape(CQCurvedShape())
-                .frame(height: 380)
-                .ignoresSafeArea(edges: .top)
-
             VStack(spacing: 0) {
                 if let queue = person.queueData {
                     ScrollView(showsIndicators: false) {
-                        //scrollable contents goes
                         VStack(spacing: 0) {
 
                             VStack(spacing: 0) {
+                                // Custom nav row
+                                HStack {
+                                    Button { dismiss() } label: {
+                                        Image(systemName: "chevron.left")
+                                            .font(.system(size: 17, weight: .semibold))
+                                            .foregroundColor(.white)
+                                    }
+                                    Spacer()
+                                    VStack(spacing: 1) {
+                                        Text("Queue Status")
+                                            .font(.custom("Inter_18pt-Bold", size: 18))
+                                            .foregroundColor(.white)
+                                        Text(person.name)
+                                            .font(.custom("Inter_18pt-Regular", size: 12))
+                                            .foregroundColor(.white.opacity(0.75))
+                                    }
+                                    Spacer()
+                                    Color.clear.frame(width: 24, height: 24)
+                                }
+                                .padding(.horizontal, 24)
+                                .padding(.top, 60)
+                                .padding(.bottom, 8)
+
                                 //live indicator
                                 HStack {
                                     HStack(spacing: 6) {
@@ -146,6 +146,17 @@ struct CompanionQueueView: View {
                                 }
                                 .padding(.bottom, 40)
                             }
+                            .background(
+                                LinearGradient.primaryGradient
+                                    .ignoresSafeArea(edges: .top)
+                                    .clipShape(UnevenRoundedRectangle(
+                                        topLeadingRadius: 0,
+                                        bottomLeadingRadius: 28,
+                                        bottomTrailingRadius: 28,
+                                        topTrailingRadius: 0,
+                                        style: .continuous
+                                    ))
+                            )
 
                             // Visit Progress
                             VStack(alignment: .leading, spacing: 16) {
@@ -163,6 +174,7 @@ struct CompanionQueueView: View {
                             .padding(.bottom, 24)
                         }
                     }
+                    .ignoresSafeArea(edges: .top)
 
                     // Bottom bar
                     VStack(spacing: 0) {
@@ -211,27 +223,7 @@ struct CompanionQueueView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                VStack(spacing: 1) {
-                    Text("Queue Status")
-                        .font(.custom("Inter_18pt-Bold", size: 17))
-                        .foregroundColor(.white)
-                    Text(person.name)
-                        .font(.custom("Inter_18pt-Regular", size: 12))
-                        .foregroundColor(.white.opacity(0.75))
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in
             AppRouter.shared.pendingTab = tab
             dismiss()

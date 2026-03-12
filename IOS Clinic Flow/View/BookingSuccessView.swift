@@ -7,22 +7,6 @@
 
 import SwiftUI
 
-// MARK: cursor movement management
-private struct CurvedBottomShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - 60))
-        path.addQuadCurve(
-            to: CGPoint(x: 0, y: rect.maxY - 60),
-            control: CGPoint(x: rect.midX, y: rect.maxY + 100)
-        )
-        path.closeSubpath()
-        return path
-    }
-}
-
 struct BookingSuccessView: View {
     @Environment(\.dismiss) private var dismiss
     let doctor: Doctor
@@ -53,45 +37,70 @@ struct BookingSuccessView: View {
     
     var body: some View {
         ZStack {
-            // extra design stuff to be added
             Color.appBackground
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                LinearGradient.primaryGradient
-                    .clipShape(CurvedBottomShape())
-                    .frame(height: 460)
-                Spacer()
-            }
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        // Success Icon
-                        ZStack {
-                            Circle()
-                                .fill(Color.successGreen)
-                                .frame(width: 70, height: 70)
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.top, 40)
-                        
-                        // if booking has been made this would appear since we dont have a back end yet xxxx
-                        Text(isPaid ? "Successful !" : "Booking Confirmed !")
-                            .font(.custom("Inter_18pt-Bold", size: 22))
-                            .foregroundColor(.white)
+
+                        // Blue header section
+                        VStack(spacing: 0) {
+                            // Nav row
+                            HStack {
+                                Button { dismiss() } label: {
+                                    Image(systemName: "chevron.left")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundColor(.white)
+                                }
+                                Spacer()
+                                Text(isPaid ? "Payment" : "Booking")
+                                    .font(.custom("Inter_18pt-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Color.clear.frame(width: 24, height: 24)
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 60)
+                            .padding(.bottom, 8)
+
+                            // Success Icon
+                            ZStack {
+                                Circle()
+                                    .fill(Color.successGreen)
+                                    .frame(width: 70, height: 70)
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 32, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
                             .padding(.top, 16)
-                        
-                        // if payment has been made shows up but since no back end no show up i guess xxxx
-                        Text(isPaid ? "Your Total payment has been paid\nsuccessfully" : "Your appointment has been scheduled\nsuccessfully")
-                            .font(.custom("Inter_18pt-Regular", size: 14))
-                            .foregroundColor(.white.opacity(0.85))
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 8)
-                        
+
+                            // if booking has been made this would appear since we dont have a back end yet xxxx
+                            Text(isPaid ? "Successful !" : "Booking Confirmed !")
+                                .font(.custom("Inter_18pt-Bold", size: 22))
+                                .foregroundColor(.white)
+                                .padding(.top, 16)
+
+                            // if payment has been made shows up but since no back end no show up i guess xxxx
+                            Text(isPaid ? "Your Total payment has been paid\nsuccessfully" : "Your appointment has been scheduled\nsuccessfully")
+                                .font(.custom("Inter_18pt-Regular", size: 14))
+                                .foregroundColor(.white.opacity(0.85))
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 8)
+                                .padding(.bottom, 60)
+                        }
+                        .background(
+                            LinearGradient.primaryGradient
+                                .ignoresSafeArea(edges: .top)
+                                .clipShape(UnevenRoundedRectangle(
+                                    topLeadingRadius: 0,
+                                    bottomLeadingRadius: 28,
+                                    bottomTrailingRadius: 28,
+                                    topTrailingRadius: 0,
+                                    style: .continuous
+                                ))
+                        )
+
                         // Booking Details Card
                         BookingDetailsCard(
                             doctor: doctor,
@@ -128,7 +137,7 @@ struct BookingSuccessView: View {
                         Spacer().frame(height: 120)
                     }
                 }
-                
+
                 // Bottom Buttons
                 VStack(spacing: 12) {
                     if isPaid {
@@ -182,13 +191,20 @@ struct BookingSuccessView: View {
                 .background(Color.white)
                 
                 // Tab Bar
-                BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true) { tab in
+                    AppRouter.shared.pendingTab = tab
+                    if tab == .home {
+                        navigateToHome = true
+                    } else {
+                        dismiss()
+                    }
+                }
             }
+            .ignoresSafeArea(edges: .top)
         }
         .ignoresSafeArea(edges: .bottom)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .preferredColorScheme(.dark)
+        .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in
             AppRouter.shared.pendingTab = tab
             navigateToHome = true
