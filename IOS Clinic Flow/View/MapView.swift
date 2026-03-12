@@ -17,43 +17,41 @@
 
 import SwiftUI
 
-// MARK: - Room category (drives colour + icon)
+// MARK: - Room category (all-blue palette)
 private enum RoomCategory {
     case entry, services, diagnostic, clinical, critical, surgical, support
-    var fill:   Color { switch self {
-        case .entry:       return Color(hex: "1A4FBB")   // deep blue
-        case .services:    return Color(hex: "2563EB")   // medium blue
-        case .diagnostic:  return Color(hex: "EFF6FF")   // pale blue
-        case .clinical:    return Color(hex: "F0FDF4")   // pale green
-        case .critical:    return Color(hex: "FFF7ED")   // pale amber
-        case .surgical:    return Color(hex: "FDF4FF")   // pale purple
-        case .support:     return Color(hex: "F8FAFC")   // near white
+
+    // All rooms share the same blue-tinted fill/border — differentiated only by shade
+    var fill: Color { switch self {
+        case .entry:      return Color(hex: "1E4DB7")   // strong blue  — entrance/elevator
+        case .services:   return Color(hex: "2563EB")   // medium blue  — reception/nurses
+        case .diagnostic: return Color(hex: "EBF4FF")   // very pale blue
+        case .clinical:   return Color(hex: "DBE9FF")   // pale blue
+        case .critical:   return Color(hex: "BFDBFE")   // slightly deeper pale blue
+        case .surgical:   return Color(hex: "D1E8FF")   // mid-pale blue
+        case .support:    return Color(hex: "F0F7FF")   // near-white blue
     }}
     var border: Color { switch self {
-        case .entry:       return Color(hex: "1A4FBB")
-        case .services:    return Color(hex: "3B82F6")
-        case .diagnostic:  return Color(hex: "93C5FD")
-        case .clinical:    return Color(hex: "86EFAC")
-        case .critical:    return Color(hex: "FCD34D")
-        case .surgical:    return Color(hex: "D8B4FE")
-        case .support:     return Color(hex: "CBD5E1")
+        case .entry:      return Color(hex: "1E4DB7")
+        case .services:   return Color(hex: "3B82F6")
+        case .diagnostic: return Color(hex: "93C5FD")
+        case .clinical:   return Color(hex: "60A5FA")
+        case .critical:   return Color(hex: "3B82F6")
+        case .surgical:   return Color(hex: "60A5FA")
+        case .support:    return Color(hex: "BAD4F5")
     }}
     var textColor: Color { switch self {
         case .entry, .services: return .white
-        case .diagnostic:       return Color(hex: "1E3A8A")
-        case .clinical:         return Color(hex: "14532D")
-        case .critical:         return Color(hex: "78350F")
-        case .surgical:         return Color(hex: "581C87")
-        case .support:          return Color(hex: "334155")
+        default:                return Color(hex: "1A3A6E")
     }}
     var icon: String { switch self {
-        case .entry:       return "door.right.hand.open"
-        case .services:    return "building.2"
-        case .diagnostic:  return "waveform.path.ecg"
-        case .clinical:    return "stethoscope"
-        case .critical:    return "heart.text.square"
-        case .surgical:    return "scissors"
-        case .support:     return "archivebox"
+        case .entry:      return "door.right.hand.open"
+        case .services:   return "building.2"
+        case .diagnostic: return "waveform.path.ecg"
+        case .clinical:   return "stethoscope"
+        case .critical:   return "heart.text.square"
+        case .surgical:   return "scissors"
+        case .support:    return "archivebox"
     }}
 }
 
@@ -760,20 +758,23 @@ struct ClinicMapView: View {
 
                         // ── Map — fixed height so the scroll works properly ─
                         ZStack {
-                            RoundedRectangle(cornerRadius: 20).fill(Color(hex: "EBF2FF"))
+                            RoundedRectangle(cornerRadius: 20).fill(Color.appBackground)
+                            RoundedRectangle(cornerRadius: 20).stroke(Color.primaryBlueDark.opacity(0.25), lineWidth: 1.5)
 
-                            // Grid
+                            // Subtle dot grid
                             Canvas { ctx, size in
-                                let cols = 14; let rows = 11; var p = Path()
-                                for c in 0...cols {
-                                    let x = size.width * CGFloat(c) / CGFloat(cols)
-                                    p.move(to: CGPoint(x: x, y: 0)); p.addLine(to: CGPoint(x: x, y: size.height))
+                                let spacing: CGFloat = size.width / 14
+                                var p = Path()
+                                var cx: CGFloat = spacing
+                                while cx < size.width {
+                                    var cy: CGFloat = spacing
+                                    while cy < size.height {
+                                        p.addEllipse(in: CGRect(x: cx - 1, y: cy - 1, width: 2, height: 2))
+                                        cy += spacing
+                                    }
+                                    cx += spacing
                                 }
-                                for r in 0...rows {
-                                    let y = size.height * CGFloat(r) / CGFloat(rows)
-                                    p.move(to: CGPoint(x: 0, y: y)); p.addLine(to: CGPoint(x: size.width, y: y))
-                                }
-                                ctx.stroke(p, with: .color(Color.primaryBlue.opacity(0.055)), lineWidth: 0.5)
+                                ctx.fill(p, with: .color(Color.primaryBlue.opacity(0.07)))
                             }.cornerRadius(20)
 
                             // Watermark
@@ -821,17 +822,16 @@ struct ClinicMapView: View {
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                             }
 
-                            // Corner legend badge — category colours
-                            VStack(alignment: .leading, spacing: 4) {
-                                legendBadgeRow(color: RoomCategory.diagnostic.fill,  border: RoomCategory.diagnostic.border,  label: "Diagnostic")
-                                legendBadgeRow(color: RoomCategory.clinical.fill,    border: RoomCategory.clinical.border,    label: "Clinical")
-                                legendBadgeRow(color: RoomCategory.critical.fill,    border: RoomCategory.critical.border,    label: "Critical")
-                                legendBadgeRow(color: RoomCategory.surgical.fill,    border: RoomCategory.surgical.border,    label: "Surgical")
-                                legendBadgeRow(color: RoomCategory.services.fill,    border: RoomCategory.services.border,    label: "Services")
+                            // Corner legend badge
+                            VStack(alignment: .leading, spacing: 5) {
+                                legendBadgeRow(color: Color.primaryBlueDark, border: .clear, label: "Start / Entrance")
+                                legendBadgeRow(color: Color(hex: "DBE9FF"), border: Color(hex: "60A5FA"), label: "Room")
+                                legendBadgeRow(color: Color(hex: "BFDBFE"), border: Color(hex: "3B82F6"), label: "Critical / ICU")
                             }
                             .padding(8)
-                            .background(Color.white.opacity(0.92))
+                            .background(Color.appBackground.opacity(0.95))
                             .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.primaryBlueDark.opacity(0.15), lineWidth: 1))
                             .padding(10)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                             .zIndex(4)
@@ -974,8 +974,8 @@ struct ClinicMapView: View {
             var spine = Path()
             spine.addRoundedRect(in: CGRect(x: 0.01*w, y: 0.44*h, width: 0.98*w, height: 0.12*h),
                                  cornerSize: CGSize(width: 6, height: 6))
-            ctx.fill(spine, with: .color(Color(hex: "DBEAFE").opacity(0.75)))
-            ctx.stroke(spine, with: .color(Color(hex: "93C5FD").opacity(0.55)), lineWidth: 1.0)
+            ctx.fill(spine, with: .color(Color(hex: "DBEAFE").opacity(0.55)))
+            ctx.stroke(spine, with: .color(Color(hex: "93C5FD").opacity(0.70)), lineWidth: 1.0)
 
             // Centre-line dashes
             var dash = Path()
