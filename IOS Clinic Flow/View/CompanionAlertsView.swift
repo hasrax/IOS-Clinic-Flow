@@ -43,7 +43,6 @@ struct CompanionAlertsView: View {
                             .foregroundColor(.textSecondary)
                     }
                     Spacer()
-                    
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16))
                         .opacity(0)
@@ -75,10 +74,13 @@ struct CompanionAlertsView: View {
                         .padding(.vertical, 16)
                     }
                 }
+
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
-            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
