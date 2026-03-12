@@ -73,7 +73,7 @@ struct QueueStatusView: View {
                                         .foregroundColor(.errorRed)
                                 }
                                 Spacer()
-                                Text("#A-0251")
+                                Text("BM240126-11")
                                     .font(.custom("Inter_18pt-Bold", size: 14))
                                     .foregroundColor(Color(hex: "F59E0B"))
                             }
@@ -176,7 +176,7 @@ struct QueueStatusView: View {
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }

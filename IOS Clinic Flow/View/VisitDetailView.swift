@@ -102,7 +102,7 @@ struct VisitDetailView: View {
                     .padding(.top, 8)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -177,7 +177,7 @@ struct VisitDetailView: View {
                 visitInfoCell(icon: "calendar", label: "Date", value: "FEB 23, 2024")
                 visitInfoCell(icon: "clock", label: "Time", value: "2:30 PM")
                 visitInfoCell(icon: "mappin.circle", label: "Location", value: "Room 204, Floor 2")
-                visitInfoCell(icon: "doc.text", label: "Token", value: "#A-0212")
+                visitInfoCell(icon: "doc.text", label: "Token", value: "BM240126-11")
             }
         }
         .padding(16)

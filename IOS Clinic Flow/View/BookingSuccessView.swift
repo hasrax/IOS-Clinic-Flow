@@ -182,7 +182,7 @@ struct BookingSuccessView: View {
                 .background(Color.white)
                 
                 // Tab Bar
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -235,7 +235,7 @@ struct BookingDetailsCard: View {
                 Text("Appointment No")
                     .font(.custom("Inter_18pt-Regular", size: 13))
                     .foregroundColor(.textSecondary)
-                Text("BM240126 - 11")
+                Text("BM240126-11")
                     .font(.custom("Inter_18pt-ExtraBold", size: 28))
                     .foregroundColor(.textPrimary)
             }

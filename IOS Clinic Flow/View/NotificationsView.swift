@@ -141,7 +141,7 @@ struct NotificationsView: View {
                 }
                 
                 // Tab Bar
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .navigationBarBackButtonHidden(true)

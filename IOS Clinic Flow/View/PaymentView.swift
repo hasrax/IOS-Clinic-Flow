@@ -180,7 +180,7 @@ struct PaymentView: View {
                     .padding(.vertical, 14)
                     .background(Color.white)
 //pay now button that can be disabled if bothing is selected
-                    BottomTabBar(selectedTab: $navTab)
+                    BottomTabBar(selectedTab: $navTab, isNeutral: true)
                 }
             }
         }

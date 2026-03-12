@@ -43,7 +43,7 @@ struct MockUser {
             upcomingAppt: UpcomingAppointment(
                 doctor: "Dr. Nimal Fernando", specialty: "Cardiology",
                 date: "Feb 25, 2026", time: "10:00 AM",
-                location: "Building B, Floor 2", token: "#A-0251"
+                location: "Building B, Floor 2", token: "BM240126-11"
             ),
             queueData: CompanionQueueData(
                 position: 5, doctor: "Dr. Nimal Fernando",

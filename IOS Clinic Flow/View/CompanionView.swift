@@ -132,7 +132,7 @@ struct CompanionView: View {
                         }
                     }
 
-                    BottomTabBar(selectedTab: $navTab)
+                    BottomTabBar(selectedTab: $navTab, isNeutral: true)
                 }
             }
             .ignoresSafeArea(edges: .bottom)

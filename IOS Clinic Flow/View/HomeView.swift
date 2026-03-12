@@ -537,7 +537,7 @@ struct LiveQueueCard: View {
                             .foregroundColor(.errorRed)
                     }
                     Spacer()
-                    Text("#A-0251")
+                    Text("BM240126-11")
                         .font(.custom("Inter_18pt-Bold", size: 14))
                         .foregroundColor(Color(hex: "F59E0B"))
                 }
@@ -680,7 +680,7 @@ struct AppointmentsSection: View {
                 image: "doctor_kamal",
                 name: "DR. Kamal Yugasnan",
                 specialty: "cardiologist",
-                bookingID: "BM240126 - 11",
+                bookingID: "BM240126-11",
                 date: "30 / 04 / 2026",
                 time: "16:00 pm"
             )
@@ -688,7 +688,7 @@ struct AppointmentsSection: View {
                 image: "doctor_nipun",
                 name: "DR. Nipun Perera",
                 specialty: "Immunologist",
-                bookingID: "BM100126 - 04",
+                bookingID: "BM100126-04",
                 date: "01 / 05 / 2026",
                 time: "18:00 pm"
             )

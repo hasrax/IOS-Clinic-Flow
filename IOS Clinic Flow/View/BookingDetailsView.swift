@@ -88,7 +88,7 @@ struct BookingDetailsView: View {
                 }
 
                 // bottom nav as always
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -485,7 +485,7 @@ struct CalendarGridView: View {
 
 // time slots
 struct TimeSlot: Identifiable, Equatable {
-    let id = UUID()
+    var id: String { time }
     let time: String
     let bookedCount: Int
     let maxCount: Int
@@ -609,7 +609,7 @@ struct TimeSlotButton: View {
                     .font(.custom("Inter_18pt-Regular", size: 10))
                     .foregroundColor(
                         slot.isFull ? .errorRed :
-                        isSelected ? .white.opacity(0.85) : .successGreen
+                        isSelected ? .white.opacity(0.85) : .primaryBlue
                     )
             }
             .frame(maxWidth: .infinity)
@@ -811,7 +811,7 @@ struct PaymentSummarySection: View {
                     Spacer()
                     Text("LKR \(String(format: "%.2f", Double(totalAmount)))")
                         .font(.custom("Inter_18pt-Bold", size: 16))
-                        .foregroundColor(.successGreen)
+                        .foregroundColor(.primaryBlue)
                 }
                 
                 // options so the user can select to pay when they want to or select what and when to pay depending on their client level*
@@ -836,7 +836,7 @@ struct PaymentSummarySection: View {
                         .foregroundColor(.textSecondary)
                     Text("LKR \(String(format: "%.2f", Double(totalAmount)))")
                         .font(.custom("Inter_18pt-Bold", size: 15))
-                        .foregroundColor(.successGreen)
+                        .foregroundColor(.primaryBlue)
                 }
                 
                 Spacer()

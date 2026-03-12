@@ -106,7 +106,7 @@ struct BookingSearchView: View {
                 }
                 
               //here on is the bottom nav
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -163,7 +163,7 @@ struct DoctorCard: View {
                     Spacer()
                     Text("Rs. \(String(format: "%.2f", Double(doctor.fee)))")
                         .font(.custom("Inter_18pt-Bold", size: 14))
-                        .foregroundColor(.successGreen)
+                        .foregroundColor(.primaryBlue)
                 }
                 
                 // Specialty
@@ -207,7 +207,7 @@ struct DoctorCard: View {
                 // is the doc available for the set date?
                 Text("Available : \(doctor.nextAvailable)")
                     .font(.custom("Inter_18pt-SemiBold", size: 12))
-                    .foregroundColor(.successGreen)
+                    .foregroundColor(.primaryBlue)
             }
         }
         .padding(14)

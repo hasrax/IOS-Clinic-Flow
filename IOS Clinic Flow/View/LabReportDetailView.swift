@@ -224,7 +224,7 @@ struct LabReportDetailView: View {
                     .padding(.top, 4)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)

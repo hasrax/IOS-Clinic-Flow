@@ -2,13 +2,13 @@ import Foundation
 
 struct MockAppointments {
     static let current = Appointment(
-        id: "A-0247",
+        id: "BM240126-11",
         doctor: MockDoctors.all[0],
         date: "Feb 23, 2026",
         time: "2:30 PM",
         status: .active,
         location: "Room 204, Floor 2",
-        token: "#A-0247",
+        token: "BM240126-11",
         queuePosition: 3,
         estimatedWait: "~15 min",
         patientName: "Malini Hasra",
@@ -30,9 +30,9 @@ struct MockAppointments {
     static let history: [Appointment] = [
         current,
         Appointment(
-            id: "A-0239", doctor: MockDoctors.all[1],
+            id: "BM260215-08", doctor: MockDoctors.all[1],
             date: "Feb 15, 2026", time: "10:00 AM", status: .completed,
-            location: "Building B, Floor 2", token: "#A-0239",
+            location: "Building B, Floor 2", token: "BM260215-08",
             totalCost: 3220,
             costs: [
                 CostItem(label: "Consultation Fee", amount: 2000),
@@ -44,9 +44,9 @@ struct MockAppointments {
             cancelReason: nil, refunded: false
         ),
         Appointment(
-            id: "A-0231", doctor: MockDoctors.all[2],
+            id: "BM260210-15", doctor: MockDoctors.all[2],
             date: "Feb 10, 2026", time: "9:00 AM", status: .cancelled,
-            location: "Room 105, Floor 1", token: "#A-0231",
+            location: "Room 105, Floor 1", token: "BM260210-15",
             totalCost: 1900,
             costs: [
                 CostItem(label: "Consultation Fee", amount: 1800),

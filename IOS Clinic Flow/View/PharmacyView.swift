@@ -322,7 +322,7 @@ struct PharmacyView: View {
                 .padding(.vertical, 14)
                 .background(Color.white)
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
     }
@@ -399,7 +399,7 @@ struct PharmacyView: View {
         }
         // show tab bar at bottom
         .safeAreaInset(edge: .bottom) {
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
     }
 
@@ -621,7 +621,7 @@ struct PharmacyPaymentView: View {
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -753,7 +753,7 @@ struct PharmacyPaymentSuccessView: View {
                 }
             }
 
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)

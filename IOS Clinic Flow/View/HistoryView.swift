@@ -88,13 +88,13 @@ struct HistoryView: View {
 
     // MARK: Mock Data for the history view
     private let bookings: [HistoryEntry] = [
-        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
+        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "BM240126-11",
                      date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
                      status: .completed, specialty: "Local Medicine", time: "2.30 PM"),
-        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
+        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "BM260215-08",
                      date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
                      status: .completed, specialty: "Local Medicine", time: "2.30 PM"),
-        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
+        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "BM260210-15",
                      date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
                      status: .completed, specialty: "Local Medicine", time: "2.30 PM"),
     ]

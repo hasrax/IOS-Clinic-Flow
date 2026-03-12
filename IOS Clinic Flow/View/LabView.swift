@@ -217,7 +217,7 @@ struct LabView: View {
                     }
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -550,7 +550,7 @@ struct LabPaymentView: View {
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -711,7 +711,7 @@ struct LabPaymentSuccessView: View {
                 }
             }
 
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
