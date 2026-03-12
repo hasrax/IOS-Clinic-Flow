@@ -111,6 +111,24 @@ struct NotificationsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
+                // Custom nav bar
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
+                    }
+                    Spacer()
+                    Text("Notifications")
+                        .font(.custom("Inter_18pt-Bold", size: 18))
+                        .foregroundColor(.textPrimary)
+                    Spacer()
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.appBackground)
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
                         // Today Section
@@ -141,28 +159,13 @@ struct NotificationsView: View {
                 }
                 
                 // Tab Bar
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
+        .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.textPrimary)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Notifications")
-                    .font(.custom("Inter_18pt-Bold", size: 18))
-                    .foregroundColor(.textPrimary)
-            }
-        }
     }
 }
 

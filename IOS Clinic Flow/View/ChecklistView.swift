@@ -100,16 +100,33 @@ struct ChecklistView: View {
                 .padding(.vertical, 14)
                 .background(Color.appBackground)
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 12) {
-                        Spacer().frame(height: 8)
+                if router.isNewUser {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        Image(systemName: "checklist")
+                            .font(.system(size: 52))
+                            .foregroundColor(Color(hex: "D8DCE6"))
+                        Text("Nothing to prepare yet")
+                            .font(.custom("Inter_18pt-Bold", size: 18))
+                            .foregroundColor(.textPrimary)
+                        Text("Your visit checklist will appear here\nonce you book an appointment")
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    Spacer()
+                } else {
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 12) {
+                            Spacer().frame(height: 8)
 
-                        ForEach($sections) { $section in
-                            ChecklistSectionView(section: $section)
-                                .padding(.horizontal, 20)
+                            ForEach($sections) { $section in
+                                ChecklistSectionView(section: $section)
+                                    .padding(.horizontal, 20)
+                            }
+
+                            Spacer().frame(height: 100)
                         }
-
-                        Spacer().frame(height: 100)
                     }
                 }
 

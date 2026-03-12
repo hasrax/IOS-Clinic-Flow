@@ -43,12 +43,12 @@ struct PaymentView: View {
         _items = State(initialValue: [
             PendingPayItem(id: "consultation", title: "Consultation Fee",
                            subtitle: doctor.name, amount: totalAmount, isSelected: true),
-            PendingPayItem(id: "lab",          title: "Laboratory Fee",
-                           subtitle: "CBC Test",             amount: 500,         isSelected: false),
-            PendingPayItem(id: "pharmacy",     title: "Pharmacy",
-                           subtitle: "Medications (3 Items)", amount: 380,        isSelected: false),
             PendingPayItem(id: "registration", title: "Registration Fee",
                            subtitle: "First Visit",          amount: 200,         isSelected: true),
+            PendingPayItem(id: "lab", title: "Laboratory Fee",
+                           subtitle: "CBC Blood Test",        amount: 1800,        isSelected: false),
+            PendingPayItem(id: "pharmacy", title: "Pharmacy",
+                           subtitle: "Prescribed Medications", amount: 1200,       isSelected: false),
         ])
     }
 //initializing the states of the variables
@@ -64,10 +64,29 @@ struct PaymentView: View {
             Color.appBackground.ignoresSafeArea()
 //outstanding card design and its apprtopriate components
             VStack(spacing: 0) {
+                // Custom nav bar
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
+                    }
+                    Spacer()
+                    Text("Pay")
+                        .font(.custom("Inter_18pt-Bold", size: 18))
+                        .foregroundColor(.textPrimary)
+                    Spacer()
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.appBackground)
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
 
                     
+                        // summary card — gradient
                         ZStack {
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(LinearGradient.primaryGradientDeep)
@@ -79,6 +98,14 @@ struct PaymentView: View {
                                 Text("LKR \(formattedAmount(selectedTotal))")
                                     .font(.custom("Inter_18pt-Black", size: 34))
                                     .foregroundColor(.white)
+                                HStack(spacing: 6) {
+                                    Circle()
+                                        .fill(Color.white.opacity(0.5))
+                                        .frame(width: 5, height: 5)
+                                    Text("\(selectedCount) item\(selectedCount == 1 ? "" : "s") selected")
+                                        .font(.custom("Inter_18pt-Regular", size: 12))
+                                        .foregroundColor(.white.opacity(0.75))
+                                }
                             }
                             .padding(.vertical, 28)
                             .frame(maxWidth: .infinity)
@@ -106,49 +133,49 @@ struct PaymentView: View {
                                 .foregroundColor(.textPrimary)
                                 .padding(.horizontal, 20)
 
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 12) {
-                                    // Default Visa card
-                                    cardOption(
-                                        icon: "creditcard.fill", label: "Visa ****4532",
-                                        isAdd: false, selected: selectedCard == 0
-                                    ) { selectedCard = 0 }
-
-                                    // the card the user has added later hard coded for obvious reasons xxxx
-                                    ForEach(Array(savedCards.enumerated()), id: \.element.id) { idx, card in
-                                        cardOption(
-                                            icon: "creditcard.fill", label: card.label,
-                                            isAdd: false, selected: selectedCard == idx + 1
-                                        ) { selectedCard = idx + 1 }
+                            HStack(spacing: 12) {
+                                // Default Visa card
+                                Button { selectedCard = 0 } label: {
+                                    VStack(spacing: 10) {
+                                        Image(systemName: "creditcard.fill")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(.primaryBlue)
+                                        Text("Visa ****4532")
+                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .foregroundColor(.textPrimary)
                                     }
-
-                                    // add a new card
-                                    Button { showAddCard = true } label: {
-                                        VStack(spacing: 10) {
-                                            ZStack {
-                                                Circle()
-                                                    .fill(Color.primaryBlueTint)
-                                                    .frame(width: 40, height: 40)
-                                                Image(systemName: "plus")
-                                                    .font(.system(size: 16, weight: .semibold))
-                                                    .foregroundColor(.primaryBlue)
-                                            }
-                                            Text("Add Card")
-                                                .font(.custom("Inter_18pt-Medium", size: 13))
-                                                .foregroundColor(.textSecondary)
-                                        }
-                                        .frame(width: 100)
-                                        .padding(.vertical, 22)
-                                        .background(Color.white)
-                                        .cornerRadius(14)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 14)
-                                                .stroke(Color.surfaceMuted, lineWidth: 1)
-                                        )
-                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 22)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(selectedCard == 0 ? Color.primaryBlue : Color.surfaceMuted,
+                                                    lineWidth: selectedCard == 0 ? 2 : 1)
+                                    )
                                 }
-                                .padding(.horizontal, 20)
+
+                                // Add card
+                                Button { showAddCard = true } label: {
+                                    VStack(spacing: 10) {
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(.textTertiary)
+                                        Text("Add Card")
+                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .foregroundColor(.textTertiary)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 22)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color.surfaceMuted, lineWidth: 1)
+                                    )
+                                }
                             }
+                            .padding(.horizontal, 20)
                         }
 
                         Spacer().frame(height: 140)
@@ -184,32 +211,18 @@ struct PaymentView: View {
                     .padding(.vertical, 14)
                     .background(Color.white)
 //pay now button that can be disabled if bothing is selected
-                    BottomTabBar(selectedTab: $navTab)
+                    BottomTabBar(selectedTab: $navTab, isNeutral: true)
                 }
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: navTab) { _, tab in
             AppRouter.shared.pendingTab = tab
             dismiss()
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.textPrimary)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Pay")
-                    .font(.custom("Inter_18pt-Bold", size: 18))
-                    .foregroundColor(.textPrimary)
-            }
-        }
-        //tool bar with required information
+        //removed toolbar — custom nav used instead
         .navigationDestination(isPresented: $showAddCard) {
             AddCardView { card in
                 savedCards.append(card)
@@ -288,8 +301,7 @@ struct PaymentView: View {
             .cornerRadius(14)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(item.isSelected ? Color.primaryBlue.opacity(0.4) : Color.surfaceMuted,
-                            lineWidth: item.isSelected ? 1.5 : 1)
+                    .stroke(Color.surfaceMuted, lineWidth: 1)
             )
         }
     }
@@ -304,7 +316,7 @@ struct PaymentView: View {
                     .font(.custom("Inter_18pt-Medium", size: 13))
                     .foregroundColor(isAdd ? .textTertiary : .textPrimary)
             }
-            .frame(maxWidth: .infinity)
+            .frame(width: 110)
             .padding(.vertical, 22)
             .background(Color.white)
             .cornerRadius(14)

@@ -70,15 +70,9 @@ struct PharmacyView: View {
                 // Nav bar
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Pharmacy")
@@ -322,7 +316,7 @@ struct PharmacyView: View {
                 .padding(.vertical, 14)
                 .background(Color.white)
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
     }
@@ -399,7 +393,7 @@ struct PharmacyView: View {
         }
         // show tab bar at bottom
         .safeAreaInset(edge: .bottom) {
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
     }
 
@@ -451,6 +445,7 @@ struct PharmacyPaymentView: View {
     @State private var isFeeSelected = true
     @State private var selectedCard = 0
     @State private var showSuccess = false
+    @State private var showAddCard = false
     @State private var navTab: TabItem = .home
 
     var body: some View {
@@ -461,14 +456,9 @@ struct PharmacyPaymentView: View {
                 // Nav
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle().fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Payments")
@@ -486,11 +476,14 @@ struct PharmacyPaymentView: View {
                         // Outstanding
                         ZStack {
                             RoundedRectangle(cornerRadius: 18)
-                                .fill(LinearGradient.primaryGradientDeep)
+                                .fill(LinearGradient(
+                                    colors: [Color(hex: "D97706"), Color(hex: "92400E")],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                ))
                             VStack(spacing: 8) {
                                 Text("TOTAL OUTSTANDING")
                                     .font(.custom("Inter_18pt-SemiBold", size: 11))
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .foregroundColor(.white.opacity(0.75))
                                     .tracking(1.5)
                                 Text("LKR \(selectedTotal)")
                                     .font(.custom("Inter_18pt-Black", size: 34))
@@ -573,7 +566,7 @@ struct PharmacyPaymentView: View {
                                         .stroke(selectedCard == 0 ? Color.primaryBlue : Color.surfaceMuted,
                                                 lineWidth: selectedCard == 0 ? 2 : 1))
                                 }
-                                Button { selectedCard = 1 } label: {
+                                Button { showAddCard = true } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "plus")
                                             .font(.system(size: 22)).foregroundColor(.textTertiary)
@@ -583,8 +576,7 @@ struct PharmacyPaymentView: View {
                                     .frame(maxWidth: .infinity).padding(.vertical, 22)
                                     .background(Color.white).cornerRadius(14)
                                     .overlay(RoundedRectangle(cornerRadius: 14)
-                                        .stroke(selectedCard == 1 ? Color.primaryBlue : Color.surfaceMuted,
-                                                lineWidth: selectedCard == 1 ? 2 : 1))
+                                        .stroke(Color.surfaceMuted, lineWidth: 1))
                                 }
                             }
                             .padding(.horizontal, 20)
@@ -621,12 +613,16 @@ struct PharmacyPaymentView: View {
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
+        .navigationDestination(isPresented: $showAddCard) {
+            AddCardView { _ in showAddCard = false }
+        }
         .navigationDestination(isPresented: $showSuccess) {
             PharmacyPaymentSuccessView(totalPaid: selectedTotal)
         }
@@ -753,7 +749,7 @@ struct PharmacyPaymentSuccessView: View {
                 }
             }
 
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)

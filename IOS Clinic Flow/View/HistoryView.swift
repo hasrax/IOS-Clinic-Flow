@@ -61,15 +61,15 @@ enum HistoryStatus {
 //history card data model
 struct HistoryEntry: Identifiable {
     let id = UUID()
-    let type: HistoryItemType    // Used to determine which card style to render
-    let title: String            // Doctor name, test name, or drug name
-    let reference: String        // Booking/lab/payment reference number
-    let date: String             // Formatted date string e.g. "Feb 23, 2026"
-    let doctor: String           // Doctor or issuer name
-    let amount: Int              // Amount in LKR
-    let status: HistoryStatus    // Outcome badge shown on the card
-    var specialty: String? = nil // Optional specialty shown for bookings
-    var time: String? = nil      // Optional time shown for booking cards
+    let type: HistoryItemType    
+    let title: String            
+    let reference: String        
+    let date: String        
+    let doctor: String          
+    let amount: Int           
+    let status: HistoryStatus    
+    var specialty: String? = nil 
+    var time: String? = nil      
 }
 
 struct HistoryView: View {
@@ -88,15 +88,15 @@ struct HistoryView: View {
 
     // MARK: Mock Data for the history view
     private let bookings: [HistoryEntry] = [
-        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
-                     date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
-                     status: .completed, specialty: "Local Medicine", time: "2.30 PM"),
-        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
-                     date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
-                     status: .completed, specialty: "Local Medicine", time: "2.30 PM"),
-        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "#A-0247",
-                     date: "Feb 23, 2026", doctor: "Local Medicine", amount: 3220,
-                     status: .completed, specialty: "Local Medicine", time: "2.30 PM"),
+        HistoryEntry(type: .booking, title: "Dr Hasra Gunawardena", reference: "BM240126-11",
+                     date: "Feb 23, 2026", doctor: "General Medicine", amount: 3220,
+                     status: .completed, specialty: "General Medicine", time: "2.30 PM"),
+        HistoryEntry(type: .booking, title: "Dr Lakshan Perera", reference: "BM260215-08",
+                     date: "Feb 23, 2026", doctor: "Immunologist", amount: 3220,
+                     status: .completed, specialty: "Immunologist", time: "2.30 PM"),
+        HistoryEntry(type: .booking, title: "Dr Samantha Perera", reference: "BM260210-15",
+                     date: "Feb 23, 2026", doctor: "General Medicine", amount: 3220,
+                     status: .completed, specialty: "General Medicine", time: "2.30 PM"),
     ]
 
     private let labItems: [HistoryEntry] = [
@@ -142,14 +142,31 @@ struct HistoryView: View {
                     .padding(.vertical, 16)
                     .background(Color.appBackground)
 
-                ScrollView(showsIndicators: false) {
+                if router.isNewUser {
+                    Spacer()
                     VStack(spacing: 16) {
-                        summaryCard.padding(.horizontal, 16)
-                        filterTabs.padding(.horizontal, 16)
-                        contentList.padding(.horizontal, 16)
-                        Spacer().frame(height: 100)
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.system(size: 52))
+                            .foregroundColor(Color(hex: "D8DCE6"))
+                        Text("No history yet")
+                            .font(.custom("Inter_18pt-Bold", size: 18))
+                            .foregroundColor(.textPrimary)
+                        Text("Your visits, lab tests and payments\nwill appear here once you get started")
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
                     }
-                    .padding(.top, 12)
+                    Spacer()
+                } else {
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 16) {
+                            summaryCard.padding(.horizontal, 16)
+                            filterTabs.padding(.horizontal, 16)
+                            contentList.padding(.horizontal, 16)
+                            Spacer().frame(height: 100)
+                        }
+                        .padding(.top, 12)
+                    }
                 }
 
                 BottomTabBar(selectedTab: tabBinding)
@@ -253,17 +270,17 @@ struct HistoryView: View {
         switch selectedFilter {
         case .all:   allContent
         case .bookings:
-            sectionBlock("All") {
+            sectionBlock("Bookings") {
                 ForEach(bookings) { item in
                     BookingHistoryCard(item: item, onViewDetails: { showVisitDetail = true })
                 }
             }
         case .lab:
-            sectionBlock("All") {
+            sectionBlock("Laboratory") {
                 ForEach(labItems) { item in IconHistoryCard(item: item) }
             }
         case .pharmacy:
-            sectionBlock("All") {
+            sectionBlock("Pharmacy") {
                 ForEach(pharmacyItems) { item in IconHistoryCard(item: item) }
             }
         }
@@ -271,7 +288,7 @@ struct HistoryView: View {
 
     private var allContent: some View {
         VStack(alignment: .leading, spacing: 20) {
-            sectionBlock("All") {
+            sectionBlock("Bookings") {
                 ForEach(bookings) { item in
                     BookingHistoryCard(item: item, onViewDetails: { showVisitDetail = true })
                 }

@@ -794,6 +794,24 @@ struct ClinicMapView: View {
             Color(hex: "F4F6FA").ignoresSafeArea()
 
             VStack(spacing: 0) {
+                // Custom nav bar
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
+                    }
+                    Spacer()
+                    Text("Clinic Navigation")
+                        .font(.custom("Inter_18pt-Bold", size: 18))
+                        .foregroundColor(.textPrimary)
+                    Spacer()
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.appBackground)
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
 
@@ -1121,6 +1139,7 @@ struct ClinicMapView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { fromText = floor.defaultFrom; toText = floor.defaultTo; resolveRoute(); restartStepTimer() }

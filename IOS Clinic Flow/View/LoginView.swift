@@ -14,22 +14,32 @@ struct LoginView: View {
     @State private var showOTP      = false // Controls whether the OTP sheet should appear
     @State private var goBack       = false
     
-    var isValid: Bool { phoneNumber.filter { $0.isNumber }.count >= 10 }
+    var isValid: Bool { phoneNumber.filter { $0.isNumber }.count == 9 }
     
     func validateAndSend() {
-            let digits = phoneNumber.filter { $0.isNumber }
+        let digits = phoneNumber.filter { $0.isNumber }
         // Check validation rules
-            if digits.isEmpty        { phoneError = "Please enter your mobile number" }
-            else if digits.count < 9 { phoneError = "Enter a valid mobile number (min 9 digits)" }
-            else                     { phoneError = ""; showOTP = true }
+        if digits.isEmpty {
+            phoneError = "Please enter your mobile number"
+        } else if digits.first == "0" {
+            phoneError = "Don't include leading 0 — enter 9 digits after +94"
+        } else if digits.count < 9 {
+            phoneError = "Number too short — must be exactly 9 digits"
+        } else if digits.count > 9 {
+            phoneError = "Number too long — must be exactly 9 digits"
+        } else {
+            phoneError = ""
+            showOTP = true
         }
+    }
     
     var body: some View {
         if goBack {
             LanguageView()
         }
         else if router.isLoggedIn {
-            RootView(isFirstUser: true) // If user is already logged in, navigate to root screen
+            // +94 77 123 4567 - existing user number
+            RootView(isFirstUser: !router.loggedInPhone.hasSuffix("771234567"))
         }
         else {
             ZStack(alignment: .bottom) {
@@ -96,8 +106,7 @@ struct LoginView: View {
                                 .keyboardType(.phonePad)
                                 .onChange(of: phoneNumber) { val in
                                     phoneError = ""
-                                    // Limit entered digits to 10
-                                    if val.filter({ $0.isNumber }).count > 10 {
+                                    if val.filter({ $0.isNumber }).count > 9 {
                                         phoneNumber = String(val.dropLast())
                                     }
                                 }
@@ -165,13 +174,13 @@ struct LoginView: View {
                         Spacer()
                     }
                     
-                    Spacer().frame(height: 40)
+                    Spacer().frame(height: 70)
                 }
                 
                 // White card takes 62% of screen height
                 .frame(height: UIScreen.main.bounds.height * 0.62)
                 .frame(maxWidth: .infinity)
-                .background(Color.white)
+                .background(Color(hex: "EEF1F5"))
                 .clipShape(
                     UnevenRoundedRectangle(
                         topLeadingRadius: 36,
@@ -199,7 +208,12 @@ struct LoginView: View {
                 OTPView(
                     phoneNumber: phoneNumber,
                     isPresented: $showOTP,
-                    onVerified: { router.isLoggedIn = true }
+                    onVerified: {
+                        let digits = phoneNumber.filter { $0.isNumber }
+                        router.loggedInPhone = digits
+                        router.isNewUser = !digits.hasSuffix("771234567")
+                        router.isLoggedIn = true
+                    }
                 )
             }
             
@@ -220,9 +234,10 @@ struct LoginView: View {
                         .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
                     if isSystem {
                         // Apple logo
-                        Image(systemName: "apple.logo")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(Color(hex: "1B3A6B"))
+                        Image("apple")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
                     } else {
                         // Google logo
                         Image("google")

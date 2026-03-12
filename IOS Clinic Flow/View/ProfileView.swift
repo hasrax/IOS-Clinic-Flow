@@ -20,11 +20,18 @@ struct ProfileView: View {
     @State private var displayName  = MockUser.current.name
     @State private var displayPhone = MockUser.current.phone
 
-    // mock data
     @State private var allergies: [String]                        = ["shellfish", "milk", "Peanuts", "Bees", "Penicillin"]
     @State private var emergencyContacts: [(name: String, phone: String)] = [
         (name: "Nimali Sonali", phone: "+94 77 6579 234")
     ]
+
+    init() {
+        let isNew = AppRouter.shared.isNewUser
+        _displayName = State(initialValue: isNew ? "" : MockUser.current.name)
+        _displayPhone = State(initialValue: isNew ? "+94 \(AppRouter.shared.loggedInPhone)" : MockUser.current.phone)
+        _allergies = State(initialValue: isNew ? [] : ["shellfish", "milk", "Peanuts", "Bees", "Penicillin"])
+        _emergencyContacts = State(initialValue: isNew ? [] : [(name: "Nimali Sonali", phone: "+94 77 6579 234")])
+    }
 
     // Navigation steps
     @State private var showEditProfile   = false
@@ -69,11 +76,22 @@ struct ProfileView: View {
                         // Avatar/name section
                         VStack(spacing: 6) {
                             ZStack(alignment: .bottomTrailing) {
-                                Image("malini_avatar")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 90, height: 90)
-                                    .clipShape(Circle())
+                                if router.isNewUser {
+                                    Circle()
+                                        .fill(Color(hex: "D8DCE6"))
+                                        .frame(width: 90, height: 90)
+                                        .overlay(
+                                            Image(systemName: "person.fill")
+                                                .font(.system(size: 36))
+                                                .foregroundColor(Color(hex: "8A93A6"))
+                                        )
+                                } else {
+                                    Image("malini_avatar")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 90, height: 90)
+                                        .clipShape(Circle())
+                                }
                                 Circle()
                                     .fill(Color.white)
                                     .frame(width: 28, height: 28)
@@ -97,10 +115,10 @@ struct ProfileView: View {
                         VStack(spacing: 16) {
                             // Stats row
                             HStack(spacing: 10) {
-                                statBox(label: "Blood\nType", value: MockUser.current.bloodType)
-                                statBox(label: "Age",         value: "\(MockUser.current.age)")
-                                statBox(label: "Weight",      value: MockUser.current.weight)
-                                statBox(label: "Height",      value: MockUser.current.height)
+                                statBox(label: "Blood\nType", value: router.isNewUser ? "—" : MockUser.current.bloodType)
+                                statBox(label: "Age",         value: router.isNewUser ? "—" : "\(MockUser.current.age)")
+                                statBox(label: "Weight",      value: router.isNewUser ? "—" : MockUser.current.weight)
+                                statBox(label: "Height",      value: router.isNewUser ? "—" : MockUser.current.height)
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 16)

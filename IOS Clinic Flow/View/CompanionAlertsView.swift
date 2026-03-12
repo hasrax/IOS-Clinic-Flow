@@ -76,7 +76,7 @@ struct CompanionAlertsView: View {
                     }
                 }
             }
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
         .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }

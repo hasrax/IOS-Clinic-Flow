@@ -182,26 +182,16 @@ struct BookingSuccessView: View {
                 .background(Color.white)
                 
                 // Tab Bar
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .onChange(of: navTab) { _, tab in
             AppRouter.shared.pendingTab = tab
             navigateToHome = true
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
         }
         .navigationDestination(isPresented: $showPayment) {
             PaymentView(
@@ -246,7 +236,7 @@ struct BookingDetailsCard: View {
                 Text("Appointment No")
                     .font(.custom("Inter_18pt-Regular", size: 13))
                     .foregroundColor(.textSecondary)
-                Text("BM240126 - 11")
+                Text("BM240126-11")
                     .font(.custom("Inter_18pt-ExtraBold", size: 28))
                     .foregroundColor(.textPrimary)
             }
