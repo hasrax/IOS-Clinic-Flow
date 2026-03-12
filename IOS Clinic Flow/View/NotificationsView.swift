@@ -144,8 +144,11 @@ struct NotificationsView: View {
                 BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

@@ -121,15 +121,9 @@ struct LabView: View {
                 // Nav bar
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Laboratory")
@@ -355,6 +349,7 @@ struct LabPaymentView: View {
     @State private var isLabFeeSelected = true //to see if the lab fee checkbox has selected or not 
     @State private var selectedCard = 0 // 0 = current card, 1 = new card
     @State private var showSuccess = false
+    @State private var showAddCard = false
     @State private var navTab: TabItem = .home
 
     private let labFeeAmount = 1800
@@ -367,15 +362,9 @@ struct LabPaymentView: View {
                 // Nav bar
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Payments")
@@ -491,7 +480,7 @@ struct LabPaymentView: View {
                                     )
                                 }
                                 // Add card
-                                Button { selectedCard = 1 } label: {
+                                Button { showAddCard = true } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "plus")
                                             .font(.system(size: 22))
@@ -556,6 +545,9 @@ struct LabPaymentView: View {
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
+        .navigationDestination(isPresented: $showAddCard) {
+            AddCardView { _ in showAddCard = false }
+        }
         .navigationDestination(isPresented: $showSuccess) {
             LabPaymentSuccessView()
         }

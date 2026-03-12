@@ -675,13 +675,11 @@ struct LiveQueueCard: View {
 // used to check the appointments and their level of appointment
 struct AppointmentsSection: View {
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("Upcoming Bookings")
                 .font(.custom("Inter_18pt-Bold", size: 18))
                 .foregroundColor(.primaryBlue)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
-                .padding(.bottom, 4)
             AppointmentCard(
                 image: "doctor_kamal",
                 name: "DR. Kamal Yugasnan",

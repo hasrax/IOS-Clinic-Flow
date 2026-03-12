@@ -210,6 +210,7 @@ struct CompanionQueueView: View {
                 }
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

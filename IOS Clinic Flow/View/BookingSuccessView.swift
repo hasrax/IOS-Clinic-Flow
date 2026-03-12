@@ -185,6 +185,7 @@ struct BookingSuccessView: View {
                 BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)

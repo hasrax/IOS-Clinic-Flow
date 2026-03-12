@@ -13,14 +13,9 @@ struct NavBar: View {
                 Button {
                     onBack()
                 } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color(hex: "F3F4F6"))
-                            .frame(width: 38, height: 38)
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primaryBlue)
                 }
                 .frame(width: 44)
             } else {
@@ -41,14 +36,9 @@ struct NavBar: View {
                 Button {
                     action()
                 } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color(hex: "F3F4F6"))
-                            .frame(width: 38, height: 38)
-                        Image(systemName: icon)// custom SF symbol passed
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
+                    Image(systemName: icon)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primaryBlue)
                 }
                 .frame(width: 44)
             } else {

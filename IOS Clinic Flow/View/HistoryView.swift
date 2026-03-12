@@ -61,15 +61,15 @@ enum HistoryStatus {
 //history card data model
 struct HistoryEntry: Identifiable {
     let id = UUID()
-    let type: HistoryItemType    // Used to determine which card style to render
-    let title: String            // Doctor name, test name, or drug name
-    let reference: String        // Booking/lab/payment reference number
-    let date: String             // Formatted date string e.g. "Feb 23, 2026"
-    let doctor: String           // Doctor or issuer name
-    let amount: Int              // Amount in LKR
-    let status: HistoryStatus    // Outcome badge shown on the card
-    var specialty: String? = nil // Optional specialty shown for bookings
-    var time: String? = nil      // Optional time shown for booking cards
+    let type: HistoryItemType    
+    let title: String            
+    let reference: String        
+    let date: String        
+    let doctor: String          
+    let amount: Int           
+    let status: HistoryStatus    
+    var specialty: String? = nil 
+    var time: String? = nil      
 }
 
 struct HistoryView: View {
@@ -270,17 +270,17 @@ struct HistoryView: View {
         switch selectedFilter {
         case .all:   allContent
         case .bookings:
-            sectionBlock("All") {
+            sectionBlock("Bookings") {
                 ForEach(bookings) { item in
                     BookingHistoryCard(item: item, onViewDetails: { showVisitDetail = true })
                 }
             }
         case .lab:
-            sectionBlock("All") {
+            sectionBlock("Laboratory") {
                 ForEach(labItems) { item in IconHistoryCard(item: item) }
             }
         case .pharmacy:
-            sectionBlock("All") {
+            sectionBlock("Pharmacy") {
                 ForEach(pharmacyItems) { item in IconHistoryCard(item: item) }
             }
         }
@@ -288,7 +288,7 @@ struct HistoryView: View {
 
     private var allContent: some View {
         VStack(alignment: .leading, spacing: 20) {
-            sectionBlock("All") {
+            sectionBlock("Bookings") {
                 ForEach(bookings) { item in
                     BookingHistoryCard(item: item, onViewDetails: { showVisitDetail = true })
                 }

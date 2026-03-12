@@ -48,15 +48,9 @@ struct LabReportDetailView: View {
                 HStack {
                     //custom back button
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Urinalysis Report")

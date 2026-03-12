@@ -36,6 +36,7 @@ private struct QueueCurvedShape: Shape {
 struct QueueStatusView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navTab: TabItem = .home
+    @State private var showMap = false
 //the dismiss to go do the  initial page
     private let steps: [QueueStep] = [
         QueueStep(title: "Registration",  date: "14 , February 2025", timeLabel: "1.45 PM",      timeColor: .textSecondary,            state: .done),
@@ -168,8 +169,7 @@ struct QueueStatusView: View {
                         .fill(Color.surfaceMuted)
                         .frame(height: 1)
                     HStack(spacing: 16) {
-                        OutlinedActionButton(label: "Navigate", icon: "map.fill") {}
-                        OutlinedActionButton(label: "Checklist", icon: "checklist") {}
+                        OutlinedActionButton(label: "Navigate", icon: "map.fill") { showMap = true }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
@@ -179,9 +179,13 @@ struct QueueStatusView: View {
                 BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $showMap) {
+            ClinicMapView()
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button { dismiss() } label: {

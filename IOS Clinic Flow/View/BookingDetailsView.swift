@@ -91,8 +91,11 @@ struct BookingDetailsView: View {
                 BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .onAppear { if AppRouter.shared.pendingTab != nil { dismiss() } }
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
         .toolbar {

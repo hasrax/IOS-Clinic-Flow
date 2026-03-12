@@ -197,16 +197,9 @@ struct OTPView: View {
                                     )
                                     .shadow(color: isComplete ? Color.accentBlue.opacity(0.40) : .clear,
                                             radius: 12, x: 0, y: 5)
-                                HStack(spacing: 10) {
-                                    Text("Verify & Continue")
-                                        .font(.custom("Inter_18pt-Bold", size: 16))
-                                        .foregroundColor(.white)
-                                    ZStack {
-                                        Circle().fill(Color.white.opacity(0.20)).frame(width: 28, height: 28)
-                                        Image(systemName: "checkmark")
-                                            .font(.system(size: 12, weight: .bold)).foregroundColor(.white)
-                                    }
-                                }
+                                Text("Verify")
+                                    .font(.custom("Inter_18pt-Bold", size: 16))
+                                    .foregroundColor(.white)
                             }
                             .frame(maxWidth: .infinity).frame(height: 56)
                         }

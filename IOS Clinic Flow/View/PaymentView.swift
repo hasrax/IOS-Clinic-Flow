@@ -102,49 +102,49 @@ struct PaymentView: View {
                                 .foregroundColor(.textPrimary)
                                 .padding(.horizontal, 20)
 
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 12) {
-                                    // Default Visa card
-                                    cardOption(
-                                        icon: "creditcard.fill", label: "Visa ****4532",
-                                        isAdd: false, selected: selectedCard == 0
-                                    ) { selectedCard = 0 }
-
-                                    // the card the user has added later hard coded for obvious reasons xxxx
-                                    ForEach(Array(savedCards.enumerated()), id: \.element.id) { idx, card in
-                                        cardOption(
-                                            icon: "creditcard.fill", label: card.label,
-                                            isAdd: false, selected: selectedCard == idx + 1
-                                        ) { selectedCard = idx + 1 }
+                            HStack(spacing: 12) {
+                                // Default Visa card
+                                Button { selectedCard = 0 } label: {
+                                    VStack(spacing: 10) {
+                                        Image(systemName: "creditcard.fill")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(.primaryBlue)
+                                        Text("Visa ****4532")
+                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .foregroundColor(.textPrimary)
                                     }
-
-                                    // add a new card
-                                    Button { showAddCard = true } label: {
-                                        VStack(spacing: 10) {
-                                            ZStack {
-                                                Circle()
-                                                    .fill(Color.primaryBlueTint)
-                                                    .frame(width: 40, height: 40)
-                                                Image(systemName: "plus")
-                                                    .font(.system(size: 16, weight: .semibold))
-                                                    .foregroundColor(.primaryBlue)
-                                            }
-                                            Text("Add Card")
-                                                .font(.custom("Inter_18pt-Medium", size: 13))
-                                                .foregroundColor(.textSecondary)
-                                        }
-                                        .frame(width: 110)
-                                        .padding(.vertical, 22)
-                                        .background(Color.white)
-                                        .cornerRadius(14)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 14)
-                                                .stroke(Color.surfaceMuted, lineWidth: 1)
-                                        )
-                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 22)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(selectedCard == 0 ? Color.primaryBlue : Color.surfaceMuted,
+                                                    lineWidth: selectedCard == 0 ? 2 : 1)
+                                    )
                                 }
-                                .padding(.horizontal, 20)
+
+                                // Add card
+                                Button { showAddCard = true } label: {
+                                    VStack(spacing: 10) {
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(.textTertiary)
+                                        Text("Add Card")
+                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .foregroundColor(.textTertiary)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 22)
+                                    .background(Color.white)
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color.surfaceMuted, lineWidth: 1)
+                                    )
+                                }
                             }
+                            .padding(.horizontal, 20)
                         }
 
                         Spacer().frame(height: 140)
@@ -187,6 +187,8 @@ struct PaymentView: View {
         .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .onChange(of: navTab) { _, tab in
             AppRouter.shared.pendingTab = tab
             dismiss()
