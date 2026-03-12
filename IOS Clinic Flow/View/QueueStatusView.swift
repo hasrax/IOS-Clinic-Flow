@@ -36,6 +36,7 @@ private struct QueueCurvedShape: Shape {
 struct QueueStatusView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navTab: TabItem = .home
+    @State private var showMap = false
 //the dismiss to go do the  initial page
     private let steps: [QueueStep] = [
         QueueStep(title: "Registration",  date: "14 , February 2025", timeLabel: "1.45 PM",      timeColor: .textSecondary,            state: .done),
@@ -73,7 +74,7 @@ struct QueueStatusView: View {
                                         .foregroundColor(.errorRed)
                                 }
                                 Spacer()
-                                Text("#A-0251")
+                                Text("BM240126-11")
                                     .font(.custom("Inter_18pt-Bold", size: 14))
                                     .foregroundColor(Color(hex: "F59E0B"))
                             }
@@ -168,20 +169,23 @@ struct QueueStatusView: View {
                         .fill(Color.surfaceMuted)
                         .frame(height: 1)
                     HStack(spacing: 16) {
-                        OutlinedActionButton(label: "Navigate", icon: "map.fill") {}
-                        OutlinedActionButton(label: "Checklist", icon: "checklist") {}
+                        OutlinedActionButton(label: "Navigate", icon: "map.fill") { showMap = true }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $showMap) {
+            ClinicMapView()
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button { dismiss() } label: {

@@ -6,8 +6,9 @@ final class AppRouter: ObservableObject {
     private init() {}
     @Published var isLoggedIn: Bool = false
     @Published var pendingTab: TabItem? = nil
-    /// The tab currently visible in RootView — used to sync BottomTabBar highlights.
     @Published var activeTab: TabItem = .home
+    @Published var loggedInPhone: String = ""
+    @Published var isNewUser: Bool = false
 }
 
 struct HomeView: View {
@@ -21,6 +22,11 @@ struct HomeView: View {
     @State private var showCompanion = false
     @State private var showQueueStatus = false
     @State private var showPayment = false
+    @State private var showEditProfile = false
+    @State private var showCalendar = false
+    @State private var showProfile = false
+    @State private var newUserName = ""
+    @State private var newUserPhone = ""
 //Boolean Flags which are user to navigate to different places when toggled to true
     init(isReturningUser: Bool = false) {
         _isFirstUser = State(initialValue: !isReturningUser)
@@ -37,7 +43,7 @@ struct HomeView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 0) {
                             // Header — same for both
-                            HomeHeaderView(showNotifications: $showNotifications) //show notification is set as a two way binding here
+                            HomeHeaderView(showNotifications: $showNotifications, showProfile: $showProfile) //show notification is set as a two way binding here
                                 .padding(.horizontal, 20)
                                 .padding(.top, 12)
                                 .padding(.bottom, 16)
@@ -46,10 +52,11 @@ struct HomeView: View {
                                 FirstUserContent(
                                     isFirstUser: $isFirstUser,
                                     showBookingSearch: $showBookingSearch,
-                                    onMap: { isFirstUser = false; showMap = true },
-                                    onLab: { isFirstUser = false; showLab = true },
-                                    onPharmacy: { isFirstUser = false; showPharmacy = true },
-                                    onCompanion: { isFirstUser = false; showCompanion = true }
+                                    showEditProfile: $showEditProfile,
+                                    onMap: { showMap = true },
+                                    onLab: { showLab = true },
+                                    onPharmacy: { showPharmacy = true },
+                                    onCompanion: { showCompanion = true }
                                 )
                             } else {
                                 ReturningUserContent(
@@ -59,7 +66,8 @@ struct HomeView: View {
                                     onPharmacy: { showPharmacy = true },
                                     onCompanion: { showCompanion = true },
                                     onQueueTap: { showQueueStatus = true },
-                                    onPay: { showPayment = true }
+                                    onPay: { showPayment = true },
+                                    onCalendar: { showCalendar = true }
                                 )
                             }
 
@@ -100,8 +108,22 @@ struct HomeView: View {
                     doctor: MockDoctors.all[0],
                     selectedDate: Date(),
                     selectedTimeSlot: TimeSlot(time: "8.30 AM", bookedCount: 3, maxCount: 8),
-                    totalAmount: 1600 //hardcoded data due to only having a front end we will change if if required later xxxx
+                    totalAmount: 1600
                 )
+            }
+            .navigationDestination(isPresented: $showEditProfile) {
+                EditProfileView(name: $newUserName, phone: $newUserPhone)
+            }
+            .navigationDestination(isPresented: $showCalendar) {
+                CalendarView()
+            }
+            .navigationDestination(isPresented: $showProfile) {
+                ProfileView()
+            }
+            .onAppear {
+                if AppRouter.shared.isNewUser && newUserPhone.isEmpty {
+                    newUserPhone = "+94 \(AppRouter.shared.loggedInPhone)"
+                }
             }
             .onChange(of: selectedTab) { _, newTab in
                 if newTab != .home {
@@ -116,27 +138,48 @@ struct HomeView: View {
 // MARK: - Header (both screens)
 struct HomeHeaderView: View {
     @Binding var showNotifications: Bool
-    
+    @Binding var showProfile: Bool
+    @ObservedObject private var router = AppRouter.shared
+
     var body: some View {
         HStack(spacing: 12) {
-            // Avatar
-            Image("malini_avatar")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 46, height: 46)
-                .clipShape(Circle())
-                .overlay(
+            Button { showProfile = true } label: {
+                if router.isNewUser {
                     Circle()
-                        .stroke(Color.white, lineWidth: 2)
-                )
+                        .fill(Color(hex: "D8DCE6"))
+                        .frame(width: 46, height: 46)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(hex: "8A93A6"))
+                        )
+                } else {
+                    Image("malini_avatar")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 46, height: 46)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 2)
+                        )
+                }
+            }
+            .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Good Morning")
                     .font(.custom("Inter_18pt-Regular", size: 13))
                     .foregroundColor(.textSecondary)
-                Text("Malini Perera")
-                    .font(.custom("Inter_18pt-Bold", size: 16))
-                    .foregroundColor(.textPrimary)
+                if router.isNewUser {
+                    Text("+94 \(router.loggedInPhone)")
+                        .font(.custom("Inter_18pt-Bold", size: 16))
+                        .foregroundColor(.textPrimary)
+                } else {
+                    Text("Malini Perera")
+                        .font(.custom("Inter_18pt-Bold", size: 16))
+                        .foregroundColor(.textPrimary)
+                }
             }
 
             Spacer()
@@ -163,6 +206,7 @@ struct HomeHeaderView: View {
 struct FirstUserContent: View {
     @Binding var isFirstUser: Bool
     @Binding var showBookingSearch: Bool
+    @Binding var showEditProfile: Bool
     var onMap: () -> Void = {}
     var onLab: () -> Void = {}
     var onPharmacy: () -> Void = {}
@@ -184,7 +228,6 @@ struct FirstUserContent: View {
 //yap about the user
                     // White book button
                     Button {
-                        isFirstUser = false
                         showBookingSearch = true
                     } label: {
                         HStack(spacing: 8) {
@@ -210,8 +253,8 @@ struct FirstUserContent: View {
     //This shows the 6 quock actions buttons but with some options closed sincethis is for the first user
             QuickActionsGrid(
                 firstUserMode: true,
-                onBookNow: { isFirstUser = false; showBookingSearch = true },
-                onCompanion: { isFirstUser = false; onCompanion() }
+                onBookNow: { showBookingSearch = true },
+                onCompanion: { onCompanion() }
             )
             .padding(.bottom, 24)
 
@@ -222,33 +265,35 @@ struct FirstUserContent: View {
                     .foregroundColor(.textPrimary)
                     .padding(.horizontal, 20)
 
-                WhiteCard(cornerRadius: 16, padding: 16) {
-                    HStack(spacing: 14) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(hex: "E5E7EB"))
-                                .frame(width: 42, height: 42)
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 18))
-                                .foregroundColor(.textSecondary)
-                        }
-//helps complete ur profile
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Complete Your Profile")
-                                .font(.custom("Inter_18pt-Bold", size: 15))
-                                .foregroundColor(.textPrimary)
-                            Text("Add allergies, weight, height and\nemergency contact")
-                                .font(.custom("Inter_18pt-Regular", size: 12))
-                                .foregroundColor(.textSecondary)
-                        }
+                Button { showEditProfile = true } label: {
+                    WhiteCard(cornerRadius: 16, padding: 16) {
+                        HStack(spacing: 14) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(hex: "E5E7EB"))
+                                    .frame(width: 42, height: 42)
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.textSecondary)
+                            }
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Complete Your Profile")
+                                    .font(.custom("Inter_18pt-Bold", size: 15))
+                                    .foregroundColor(.textPrimary)
+                                Text("Add allergies, weight, height and\nemergency contact")
+                                    .font(.custom("Inter_18pt-Regular", size: 12))
+                                    .foregroundColor(.textSecondary)
+                            }
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.textTertiary)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.textTertiary)
+                        }
                     }
                 }
+                .buttonStyle(.plain)
                 .padding(.horizontal, 20)
             }
             .padding(.bottom, 24)
@@ -324,6 +369,7 @@ struct ReturningUserContent: View {
     var onCompanion: () -> Void = {}
     var onQueueTap: () -> Void = {}
     var onPay: () -> Void = {}
+    var onCalendar: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 0) {
@@ -361,7 +407,8 @@ struct ReturningUserContent: View {
                 onLab: onLab,
                 onPharmacy: onPharmacy,
                 onCompanion: onCompanion,
-                onPay: onPay
+                onPay: onPay,
+                onCalendar: onCalendar
             )
             .padding(.bottom, 16)
 
@@ -374,11 +421,11 @@ struct ReturningUserContent: View {
                 .padding(.bottom, 24)
 
             // Companion
-            CompanionSection()
+            CompanionSection(onTap: onCompanion)
                 .padding(.bottom, 24)
 
             // Calendar
-            CalendarSection()
+            CalendarSection(onTap: onCalendar)
                 .padding(.bottom, 24)
         }
     }
@@ -393,18 +440,29 @@ struct QuickActionsGrid: View {
     var onPharmacy: () -> Void = {}
     var onCompanion: () -> Void = {}
     var onPay: () -> Void = {}
+    var onCalendar: () -> Void = {}
 //to show that its not a first user mode
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Quick Actions")
-                .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.primaryBlue)
-                .padding(.horizontal, 20)
+            HStack {
+                Text("Quick Actions")
+                    .font(.custom("Inter_18pt-Bold", size: 18))
+                    .foregroundColor(.primaryBlue)
+                Spacer()
+                Button(action: onCalendar) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.primaryBlue)
+                        .frame(width: 32, height: 32)
+                        .background(RoundedRectangle(cornerRadius: 9).fill(Color.primaryBlueTint))
+                }
+            }
+            .padding(.horizontal, 20)
 
             // Row 1
             HStack(spacing: 12) {
                 QuickActionButton(icon: "house.fill",     label: "Book Now",  iconColor: .primaryBlue,            bgColor: .primaryBlueTint,                  isEnabled: true,              action: onBookNow)
-                QuickActionButton(icon: "map.fill",       label: "Map",       iconColor: Color(hex: "10B981"),    bgColor: Color(hex: "10B981").opacity(0.10), isEnabled: !firstUserMode,    action: onMap)
+                QuickActionButton(icon: "map.fill",       label: "Map",       iconColor: Color(hex: "10B981"),    bgColor: Color(hex: "10B981").opacity(0.10), isEnabled: true,              action: onMap)
                 QuickActionButton(icon: "flask.fill",     label: "Lab",       iconColor: .warningAmber,           bgColor: .warningTint,                      isEnabled: !firstUserMode,    action: onLab)
             }
             .padding(.horizontal, 20)
@@ -505,7 +563,7 @@ struct LiveQueueCard: View {
                             .foregroundColor(.errorRed)
                     }
                     Spacer()
-                    Text("#A-0251")
+                    Text("BM240126-11")
                         .font(.custom("Inter_18pt-Bold", size: 14))
                         .foregroundColor(Color(hex: "F59E0B"))
                 }
@@ -643,25 +701,30 @@ struct LiveQueueCard: View {
 // used to check the appointments and their level of appointment
 struct AppointmentsSection: View {
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Upcoming Bookings")
+                .font(.custom("Inter_18pt-Bold", size: 18))
+                .foregroundColor(.primaryBlue)
+                .padding(.horizontal, 20)
             AppointmentCard(
                 image: "doctor_kamal",
                 name: "DR. Kamal Yugasnan",
                 specialty: "cardiologist",
-                bookingID: "BM240126 - 11",
+                bookingID: "BM240126-11",
                 date: "30 / 04 / 2026",
                 time: "16:00 pm"
             )
+            .padding(.horizontal, 20)
             AppointmentCard(
                 image: "doctor_nipun",
                 name: "DR. Nipun Perera",
                 specialty: "Immunologist",
-                bookingID: "BM100126 - 04",
+                bookingID: "BM100126-04",
                 date: "01 / 05 / 2026",
                 time: "18:00 pm"
             )
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
     }
 }
 //appoints that are static to set into since its static xxxx
@@ -735,7 +798,7 @@ struct HealthSummarySection: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Health Summary")
                 .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.textPrimary)
+                .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
 
             LazyVGrid(
@@ -841,21 +904,23 @@ struct HealthSummarySection: View {
 
 // companion mode used to change the companion levels and what the companion is suppiosed to do and what they are doing
 struct CompanionSection: View {
+    var onTap: () -> Void = {}
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Companion")
                 .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.textPrimary)
+                .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
 
+            Button(action: onTap) {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.primaryBlueTint)
+                        .fill(Color(hex: "EDE9FE"))
                         .frame(width: 42, height: 42)
                     Image(systemName: "person.3.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(.primaryBlue)
+                        .foregroundColor(Color(hex: "7C3AED"))
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Amal Perera")
@@ -875,27 +940,31 @@ struct CompanionSection: View {
             .cornerRadius(16)
             .shadow(color: .black.opacity(0.03), radius: 4, x: 0, y: 2)
             .padding(.horizontal, 20)
+            }
+            .buttonStyle(.plain)
         }
     }
 }
 
 // calendar
 struct CalendarSection: View {
+    var onTap: () -> Void = {}
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Calendar")
                 .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.textPrimary)
+                .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
 
+            Button(action: onTap) {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.primaryBlueTint)
+                        .fill(Color(hex: "FEF3C7"))
                         .frame(width: 42, height: 42)
                     Image(systemName: "calendar")
                         .font(.system(size: 16))
-                        .foregroundColor(.primaryBlue)
+                        .foregroundColor(Color(hex: "D97706"))
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Dr. Nimal Fernando")
@@ -915,6 +984,8 @@ struct CalendarSection: View {
             .cornerRadius(16)
             .shadow(color: .black.opacity(0.03), radius: 4, x: 0, y: 2)
             .padding(.horizontal, 20)
+            }
+            .buttonStyle(.plain)
         }
     }
 }

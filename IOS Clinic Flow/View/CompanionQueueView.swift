@@ -186,7 +186,7 @@ struct CompanionQueueView: View {
                         .padding(.vertical, 16)
                         .background(Color.white)
 
-                        BottomTabBar(selectedTab: $navTab)
+                        BottomTabBar(selectedTab: $navTab, isNeutral: true)
                     }
                 } else {
                     // No queue data, still show bottom bar
@@ -205,11 +205,12 @@ struct CompanionQueueView: View {
 
                     VStack(spacing: 0) {
                         Rectangle().fill(Color.surfaceMuted).frame(height: 1)
-                        BottomTabBar(selectedTab: $navTab)
+                        BottomTabBar(selectedTab: $navTab, isNeutral: true)
                     }
                 }
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

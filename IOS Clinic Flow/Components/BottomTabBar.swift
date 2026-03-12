@@ -29,6 +29,8 @@ enum TabItem: Int, CaseIterable {
 
 struct BottomTabBar: View {
     @Binding var selectedTab: TabItem
+    var isNeutral: Bool = false
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         //this stack the all the tab buttons
@@ -36,11 +38,16 @@ struct BottomTabBar: View {
             ForEach(TabItem.allCases, id: \.self) { tab in
                 Spacer(minLength: 0)
                 Button {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.72)) {
-                        selectedTab = tab
+                    if isNeutral {
+                        AppRouter.shared.pendingTab = tab
+                        dismiss()
+                    } else {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.72)) {
+                            selectedTab = tab
+                        }
                     }
                 } label: {
-                    if selectedTab == tab {
+                    if selectedTab == tab && !isNeutral {
                         // Active stage
                         HStack(spacing: 7) {
                             Image(systemName: tab.icon)

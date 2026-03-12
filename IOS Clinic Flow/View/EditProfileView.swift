@@ -14,10 +14,10 @@ struct EditProfileView: View {
     @Binding var phone: String
 
     @State private var draftName   = ""
-    @State private var draftEmail  = "vihangamadushamini@gmail.com"
+    @State private var draftEmail  = ""
     @State private var draftPhone  = ""
-    @State private var draftNIC    = "200176599876"
-    @State private var draftGender = "Female"
+    @State private var draftNIC    = ""
+    @State private var draftGender = ""
     @State private var showSuccess = false
 
     private let genders = ["Female", "Male", "Other", "Prefer not to say"]
@@ -50,11 +50,22 @@ struct EditProfileView: View {
                         // Avatar
                         VStack(spacing: 8) {
                             ZStack(alignment: .bottomTrailing) {
-                                Image("malini_avatar")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 90, height: 90)
-                                    .clipShape(Circle())
+                                if AppRouter.shared.isNewUser {
+                                    Circle()
+                                        .fill(Color(hex: "D8DCE6"))
+                                        .frame(width: 90, height: 90)
+                                        .overlay(
+                                            Image(systemName: "person.fill")
+                                                .font(.system(size: 36))
+                                                .foregroundColor(Color(hex: "8A93A6"))
+                                        )
+                                } else {
+                                    Image("malini_avatar")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 90, height: 90)
+                                        .clipShape(Circle())
+                                }
                                 Circle()
                                     .fill(Color.white)
                                     .frame(width: 28, height: 28)
@@ -85,7 +96,6 @@ struct EditProfileView: View {
                             formField(label: "NIC",           text: $draftNIC,    placeholder: "200176599876")
                             Divider().padding(.horizontal, 16)
 
-                            // Gender picker
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Gender")
                                     .font(.custom("Inter_18pt-Regular", size: 13))
@@ -96,9 +106,9 @@ struct EditProfileView: View {
                                     }
                                 } label: {
                                     HStack {
-                                        Text(draftGender)
+                                        Text(draftGender.isEmpty ? "Select" : draftGender)
                                             .font(.custom("Inter_18pt-Regular", size: 15))
-                                            .foregroundColor(.textPrimary)
+                                            .foregroundColor(draftGender.isEmpty ? .textSecondary : .textPrimary)
                                         Spacer()
                                         Image(systemName: "chevron.down")
                                             .font(.system(size: 12))
@@ -158,6 +168,11 @@ struct EditProfileView: View {
         .onAppear {
             draftName  = name
             draftPhone = phone
+            if !AppRouter.shared.isNewUser {
+                draftEmail  = "vihangamadushamini@gmail.com"
+                draftNIC    = "200176599876"
+                draftGender = "Female"
+            }
         }
     }
 

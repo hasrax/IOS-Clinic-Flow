@@ -33,15 +33,9 @@ struct VisitDetailView: View {
                 // Nav bar
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Visit Details")
@@ -102,7 +96,7 @@ struct VisitDetailView: View {
                     .padding(.top, 8)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -177,7 +171,7 @@ struct VisitDetailView: View {
                 visitInfoCell(icon: "calendar", label: "Date", value: "FEB 23, 2024")
                 visitInfoCell(icon: "clock", label: "Time", value: "2:30 PM")
                 visitInfoCell(icon: "mappin.circle", label: "Location", value: "Room 204, Floor 2")
-                visitInfoCell(icon: "doc.text", label: "Token", value: "#A-0212")
+                visitInfoCell(icon: "doc.text", label: "Token", value: "BM240126-11")
             }
         }
         .padding(16)

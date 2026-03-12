@@ -35,7 +35,8 @@ private let rxFilters = ["All", "Active", "Completed", "Expired"]
 
 struct PrescriptionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedFilter = "All"  // currently active filter tab
+    @ObservedObject private var router = AppRouter.shared
+    @State private var selectedFilter = "All"
 
     private var filtered: [PrescriptionRecord] {
         selectedFilter == "All" ? mockRx : mockRx.filter { $0.status == selectedFilter }
@@ -65,33 +66,50 @@ struct PrescriptionsView: View {
                 .background(Color.appBackground)
 
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(rxFilters, id: \.self) { f in
-                            Button { selectedFilter = f } label: {
-                                Text(f)
-                                    .font(.custom("Inter_18pt-Medium", size: 13))
-                                    .foregroundColor(selectedFilter == f ? .white : .textSecondary)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(selectedFilter == f ? Color.primaryBlue : Color.white)
-                                    .cornerRadius(20)
+                if router.isNewUser {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        Image(systemName: "pills.fill")
+                            .font(.system(size: 52))
+                            .foregroundColor(Color(hex: "D8DCE6"))
+                        Text("No prescriptions yet")
+                            .font(.custom("Inter_18pt-Bold", size: 18))
+                            .foregroundColor(.textPrimary)
+                        Text("Your prescriptions will appear here\nafter your first consultation")
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    Spacer()
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(rxFilters, id: \.self) { f in
+                                Button { selectedFilter = f } label: {
+                                    Text(f)
+                                        .font(.custom("Inter_18pt-Medium", size: 13))
+                                        .foregroundColor(selectedFilter == f ? .white : .textSecondary)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(selectedFilter == f ? Color.primaryBlue : Color.white)
+                                        .cornerRadius(20)
+                                }
                             }
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                }
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 14) {
-                        ForEach(filtered) { rx in
-                            rxCard(rx)
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 14) {
+                            ForEach(filtered) { rx in
+                                rxCard(rx)
+                            }
+                            Spacer().frame(height: 40)
                         }
-                        Spacer().frame(height: 40)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 6)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 6)
                 }
             }
         }

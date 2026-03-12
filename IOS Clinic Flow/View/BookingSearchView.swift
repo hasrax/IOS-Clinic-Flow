@@ -38,6 +38,24 @@ struct BookingSearchView: View {
                 .ignoresSafeArea()
             //sets color to bgc
             VStack(spacing: 0) {
+                // Custom nav bar
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
+                    }
+                    Spacer()
+                    Text("Book Appointment")
+                        .font(.custom("Inter_18pt-Bold", size: 18))
+                        .foregroundColor(.textPrimary)
+                    Spacer()
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.appBackground)
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
                         // Search Fields
@@ -106,29 +124,14 @@ struct BookingSearchView: View {
                 }
                 
               //here on is the bottom nav
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
+        .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
         .onAppear { if AppRouter.shared.pendingTab != nil { dismiss() } }
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.textPrimary)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Book Appointment")
-                    .font(.custom("Inter_18pt-Bold", size: 18))
-                    .foregroundColor(.textPrimary)
-            }
-        }
         .navigationDestination(isPresented: $showDoctorDetails) {
             if let doctor = selectedDoctor {
                 BookingDetailsView(doctor: doctor)
@@ -163,7 +166,7 @@ struct DoctorCard: View {
                     Spacer()
                     Text("Rs. \(String(format: "%.2f", Double(doctor.fee)))")
                         .font(.custom("Inter_18pt-Bold", size: 14))
-                        .foregroundColor(.successGreen)
+                        .foregroundColor(.primaryBlue)
                 }
                 
                 // Specialty
@@ -207,7 +210,7 @@ struct DoctorCard: View {
                 // is the doc available for the set date?
                 Text("Available : \(doctor.nextAvailable)")
                     .font(.custom("Inter_18pt-SemiBold", size: 12))
-                    .foregroundColor(.successGreen)
+                    .foregroundColor(.primaryBlue)
             }
         }
         .padding(14)

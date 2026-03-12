@@ -68,6 +68,7 @@ struct LabTestItem: Identifiable {
 // MARK: - lab view starts from here
 struct LabView: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var router = AppRouter.shared
     @State private var selectedTab: LabTabFilter = .upcoming
     @State private var showPayment = false
     @State private var showReport = false
@@ -120,15 +121,9 @@ struct LabView: View {
                 // Nav bar
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Laboratory")
@@ -141,66 +136,82 @@ struct LabView: View {
                 .padding(.vertical, 14)
                 .background(Color.appBackground)
 
-                // Filter tabs
-                HStack(spacing: 0) {
-                    ForEach(LabTabFilter.allCases, id: \.self) { tab in
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.2)) { selectedTab = tab }
-                        } label: {
-                            Text(tab.rawValue)
-                                .font(.custom(selectedTab == tab ? "Inter_18pt-Bold" : "Inter_18pt-Regular", size: 14))
-                                .foregroundColor(selectedTab == tab ? .white : .textSecondary)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 11)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 22)
-                                        .fill(selectedTab == tab ? Color.primaryBlueDark : Color.clear)
-                                )
-                        }
+                if router.isNewUser {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        Image(systemName: "cross.vial.fill")
+                            .font(.system(size: 52))
+                            .foregroundColor(Color(hex: "D8DCE6"))
+                        Text("No lab records yet")
+                            .font(.custom("Inter_18pt-Bold", size: 18))
+                            .foregroundColor(.textPrimary)
+                        Text("Your lab results will appear here\nafter your first visit")
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
                     }
-                }
-                .padding(4)
-                .background(
-                    RoundedRectangle(cornerRadius: 24)
-                        .fill(Color.white)
-                        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
-                )
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 14) {
-                        ForEach(currentItems) { item in
-                            LabTestCard(
-                                item: item,
-                                onViewReport: {
-                                    selectedReportItem = item
-                                    showReport = true
-                                }
-                            )
-                            .padding(.horizontal, 20)
-                        }
-
-                        if selectedTab == .upcoming {
-                            Button { showPayment = true } label: {
-                                Text("Pay Lab Fee")
-                                    .font(.custom("Inter_18pt-Bold", size: 16))
-                                    .foregroundColor(.white)
+                    Spacer()
+                } else {
+                    HStack(spacing: 0) {
+                        ForEach(LabTabFilter.allCases, id: \.self) { tab in
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) { selectedTab = tab }
+                            } label: {
+                                Text(tab.rawValue)
+                                    .font(.custom(selectedTab == tab ? "Inter_18pt-Bold" : "Inter_18pt-Regular", size: 14))
+                                    .foregroundColor(selectedTab == tab ? .white : .textSecondary)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 17)
-                                    .background(LinearGradient.primaryGradient)
-                                    .cornerRadius(14)
+                                    .padding(.vertical, 11)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 22)
+                                            .fill(selectedTab == tab ? Color.primaryBlueDark : Color.clear)
+                                    )
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 8)
                         }
-
-                        Spacer().frame(height: 100)
                     }
-                    .padding(.top, 4)
+                    .padding(4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 16)
+
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 14) {
+                            ForEach(currentItems) { item in
+                                LabTestCard(
+                                    item: item,
+                                    onViewReport: {
+                                        selectedReportItem = item
+                                        showReport = true
+                                    }
+                                )
+                                .padding(.horizontal, 20)
+                            }
+
+                            if selectedTab == .upcoming {
+                                Button { showPayment = true } label: {
+                                    Text("Pay Lab Fee")
+                                        .font(.custom("Inter_18pt-Bold", size: 16))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 17)
+                                        .background(LinearGradient.primaryGradient)
+                                        .cornerRadius(14)
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 8)
+                            }
+
+                            Spacer().frame(height: 100)
+                        }
+                        .padding(.top, 4)
+                    }
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -338,6 +349,7 @@ struct LabPaymentView: View {
     @State private var isLabFeeSelected = true //to see if the lab fee checkbox has selected or not 
     @State private var selectedCard = 0 // 0 = current card, 1 = new card
     @State private var showSuccess = false
+    @State private var showAddCard = false
     @State private var navTab: TabItem = .home
 
     private let labFeeAmount = 1800
@@ -350,15 +362,9 @@ struct LabPaymentView: View {
                 // Nav bar
                 HStack {
                     Button { dismiss() } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .shadow(color: .black.opacity(0.07), radius: 6, x: 0, y: 2)
-                                .frame(width: 38, height: 38)
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
                     }
                     Spacer()
                     Text("Payments")
@@ -376,11 +382,14 @@ struct LabPaymentView: View {
                         // Outstanding amount card
                         ZStack {
                             RoundedRectangle(cornerRadius: 18)
-                                .fill(LinearGradient.primaryGradientDeep)
+                                .fill(LinearGradient(
+                                    colors: [Color(hex: "059669"), Color(hex: "065F46")],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                ))
                             VStack(spacing: 8) {
                                 Text("TOTAL OUTSTANDING")
                                     .font(.custom("Inter_18pt-SemiBold", size: 11))
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .foregroundColor(.white.opacity(0.75))
                                     .tracking(1.5)
                                 Text("LKR 1,800")
                                     .font(.custom("Inter_18pt-Black", size: 34))
@@ -474,7 +483,7 @@ struct LabPaymentView: View {
                                     )
                                 }
                                 // Add card
-                                Button { selectedCard = 1 } label: {
+                                Button { showAddCard = true } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "plus")
                                             .font(.system(size: 22))
@@ -533,12 +542,16 @@ struct LabPaymentView: View {
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
+        .navigationDestination(isPresented: $showAddCard) {
+            AddCardView { _ in showAddCard = false }
+        }
         .navigationDestination(isPresented: $showSuccess) {
             LabPaymentSuccessView()
         }
@@ -694,7 +707,7 @@ struct LabPaymentSuccessView: View {
                 }
             }
 
-            BottomTabBar(selectedTab: $navTab)
+            BottomTabBar(selectedTab: $navTab, isNeutral: true)
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
