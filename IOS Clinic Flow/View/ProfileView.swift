@@ -135,7 +135,7 @@ struct ProfileView: View {
                                     Button { showAddAllergy = true } label: {
                                         Image(systemName: "plus.circle.fill")
                                             .font(.system(size: 22))
-                                            .foregroundColor(.textPrimary)
+                                            .foregroundColor(Color(hex: "1B3A6B"))
                                     }
                                 }
                                 .padding(.horizontal, 16)
@@ -175,7 +175,7 @@ struct ProfileView: View {
                                     Button { showAddContact = true } label: {
                                         Image(systemName: "plus.circle.fill")
                                             .font(.system(size: 22))
-                                            .foregroundColor(.textPrimary)
+                                            .foregroundColor(Color(hex: "1B3A6B"))
                                     }
                                 }
                                 .padding(.horizontal, 16)
