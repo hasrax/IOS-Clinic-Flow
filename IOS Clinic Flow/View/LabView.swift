@@ -118,26 +118,23 @@ struct LabView: View {
             Color.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // iOS-standard navigation
+                // Nav bar
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(.accentColor)
-                            .frame(minWidth: 44, minHeight: 44)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Laboratory")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .font(.custom("Inter_18pt-Bold", size: 18))
+                        .foregroundColor(.textPrimary)
                     Spacer()
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 44, height: 44)
+                    Spacer().frame(width: 38)
                 }
-                .padding(.horizontal, 16)
-                .background(.regularMaterial)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.appBackground)
 
                 if router.isNewUser {
                     Spacer()
@@ -146,26 +143,39 @@ struct LabView: View {
                             .font(.system(size: 52))
                             .foregroundColor(Color(hex: "D8DCE6"))
                         Text("No lab records yet")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
+                            .font(.custom("Inter_18pt-Bold", size: 18))
+                            .foregroundColor(.textPrimary)
                         Text("Your lab results will appear here\nafter your first visit")
-                            .font(.body)
-                            .foregroundColor(.secondary)
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
                             .multilineTextAlignment(.center)
                     }
                     Spacer()
                 } else {
-                    // iOS-native segmented control style
-                    Picker("Lab Filter", selection: $selectedTab) {
+                    HStack(spacing: 0) {
                         ForEach(LabTabFilter.allCases, id: \.self) { tab in
-                            Text(tab.rawValue)
-                                .font(.subheadline)
-                                .tag(tab)
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) { selectedTab = tab }
+                            } label: {
+                                Text(tab.rawValue)
+                                    .font(.custom(selectedTab == tab ? "Inter_18pt-Bold" : "Inter_18pt-Regular", size: 14))
+                                    .foregroundColor(selectedTab == tab ? .white : .textSecondary)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 11)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 22)
+                                            .fill(selectedTab == tab ? Color.primaryBlueDark : Color.clear)
+                                    )
+                            }
                         }
                     }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, 16)
+                    .padding(4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+                    )
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 16)
 
                     ScrollView(showsIndicators: false) {
@@ -195,18 +205,19 @@ struct LabView: View {
                         
                         Button { showPayment = true } label: {
                             Text("Pay Lab Fee")
-                                .font(.headline)
-                                .fontWeight(.semibold)
+                                .font(.custom("Inter_18pt-Bold", size: 16))
                                 .foregroundColor(.white)
-                                .frame(maxWidth: .infinity, minHeight: 50)
-                                .background(.blue)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 17)
+                                .background(LinearGradient.primaryGradient)
+                                .cornerRadius(14)
                         }
-                        .accessibilityLabel("Pay lab fee")
-                        .accessibilityHint("Proceeds to lab test payment")
-                        .padding(.horizontal, 16)
+                        .accessibilityLabel("Pay Lab Fee")
+                        .accessibilityHint("Tap to proceed with lab test payment")
+                        .padding(.horizontal, 20)
                         .padding(.top, 12)
-                        .background(.regularMaterial)
+                        .padding(.bottom, 6)
+                        .background(Color.white)
                         
                         BottomTabBar(selectedTab: $navTab, isNeutral: true)
                     }
@@ -215,8 +226,8 @@ struct LabView: View {
                 }
             }
         }
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
-        .background(Color(.systemBackground))
         .onAppear { if AppRouter.shared.pendingTab != nil { dismiss() } }
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
         .navigationDestination(isPresented: $showPayment) {
