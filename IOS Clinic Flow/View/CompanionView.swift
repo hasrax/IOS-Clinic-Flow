@@ -58,8 +58,7 @@ struct CompanionView: View {
     @State private var showAlertsView = false
     @State private var showQueueView = false
     @State private var navTab: TabItem = .home
-
-    //to track the active tab
+    @ObservedObject private var router = AppRouter.shared
     enum CompanionTab { case iCareFor, myCompanions, pending }
 
     var body: some View {
@@ -99,21 +98,38 @@ struct CompanionView: View {
                     .padding(.vertical, 14)
                     .background(Color(hex: "F0F2F5"))
 
-                    ScrollView(showsIndicators: false) {
+                    if router.isNewUser {
+                        Spacer()
                         VStack(spacing: 16) {
-                    
-                            infoBanner
-
-                            tabPills
-
-                            switch selectedTab {
-                            case .iCareFor: iCareForContent
-                            case .myCompanions: myCompanionsContent
-                            case .pending: pendingContent
-                            }
+                            Image(systemName: "person.2.fill")
+                                .font(.system(size: 52))
+                                .foregroundColor(Color(hex: "D8DCE6"))
+                            Text("No companions yet")
+                                .font(.custom("Inter_18pt-Bold", size: 18))
+                                .foregroundColor(.textPrimary)
+                            Text("Add family members or caregivers\nto track their visits together")
+                                .font(.custom("Inter_18pt-Regular", size: 14))
+                                .foregroundColor(.textSecondary)
+                                .multilineTextAlignment(.center)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 30)
+                        Spacer()
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: 16) {
+                        
+                                infoBanner
+
+                                tabPills
+
+                                switch selectedTab {
+                                case .iCareFor: iCareForContent
+                                case .myCompanions: myCompanionsContent
+                                case .pending: pendingContent
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 30)
+                        }
                     }
 
                     BottomTabBar(selectedTab: $navTab)

@@ -192,17 +192,6 @@ struct BookingSuccessView: View {
             AppRouter.shared.pendingTab = tab
             navigateToHome = true
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-        }
         .navigationDestination(isPresented: $showPayment) {
             PaymentView(
                 doctor: doctor,

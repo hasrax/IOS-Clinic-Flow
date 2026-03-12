@@ -436,7 +436,7 @@ struct QuickActionsGrid: View {
             // Row 1
             HStack(spacing: 12) {
                 QuickActionButton(icon: "house.fill",     label: "Book Now",  iconColor: .primaryBlue,            bgColor: .primaryBlueTint,                  isEnabled: true,              action: onBookNow)
-                QuickActionButton(icon: "map.fill",       label: "Map",       iconColor: Color(hex: "10B981"),    bgColor: Color(hex: "10B981").opacity(0.10), isEnabled: !firstUserMode,    action: onMap)
+                QuickActionButton(icon: "map.fill",       label: "Map",       iconColor: Color(hex: "10B981"),    bgColor: Color(hex: "10B981").opacity(0.10), isEnabled: true,              action: onMap)
                 QuickActionButton(icon: "flask.fill",     label: "Lab",       iconColor: .warningAmber,           bgColor: .warningTint,                      isEnabled: !firstUserMode,    action: onLab)
             }
             .padding(.horizontal, 20)

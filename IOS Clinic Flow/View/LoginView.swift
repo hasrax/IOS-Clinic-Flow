@@ -105,8 +105,7 @@ struct LoginView: View {
                                 .foregroundColor(Color(hex: "1B2D6B"))
                                 .keyboardType(.phonePad)
                                 .onChange(of: phoneNumber) { val in
-                                    phoneError = "
-                                   
+                                    phoneError = ""
                                     if val.filter({ $0.isNumber }).count > 9 {
                                         phoneNumber = String(val.dropLast())
                                     }

@@ -142,14 +142,31 @@ struct HistoryView: View {
                     .padding(.vertical, 16)
                     .background(Color.appBackground)
 
-                ScrollView(showsIndicators: false) {
+                if router.isNewUser {
+                    Spacer()
                     VStack(spacing: 16) {
-                        summaryCard.padding(.horizontal, 16)
-                        filterTabs.padding(.horizontal, 16)
-                        contentList.padding(.horizontal, 16)
-                        Spacer().frame(height: 100)
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.system(size: 52))
+                            .foregroundColor(Color(hex: "D8DCE6"))
+                        Text("No history yet")
+                            .font(.custom("Inter_18pt-Bold", size: 18))
+                            .foregroundColor(.textPrimary)
+                        Text("Your visits, lab tests and payments\nwill appear here once you get started")
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
                     }
-                    .padding(.top, 12)
+                    Spacer()
+                } else {
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 16) {
+                            summaryCard.padding(.horizontal, 16)
+                            filterTabs.padding(.horizontal, 16)
+                            contentList.padding(.horizontal, 16)
+                            Spacer().frame(height: 100)
+                        }
+                        .padding(.top, 12)
+                    }
                 }
 
                 BottomTabBar(selectedTab: tabBinding)

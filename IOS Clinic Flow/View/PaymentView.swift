@@ -43,10 +43,6 @@ struct PaymentView: View {
         _items = State(initialValue: [
             PendingPayItem(id: "consultation", title: "Consultation Fee",
                            subtitle: doctor.name, amount: totalAmount, isSelected: true),
-            PendingPayItem(id: "lab",          title: "Laboratory Fee",
-                           subtitle: "CBC Test",             amount: 500,         isSelected: false),
-            PendingPayItem(id: "pharmacy",     title: "Pharmacy",
-                           subtitle: "Medications (3 Items)", amount: 380,        isSelected: false),
             PendingPayItem(id: "registration", title: "Registration Fee",
                            subtitle: "First Visit",          amount: 200,         isSelected: true),
         ])
@@ -137,7 +133,7 @@ struct PaymentView: View {
                                                 .font(.custom("Inter_18pt-Medium", size: 13))
                                                 .foregroundColor(.textSecondary)
                                         }
-                                        .frame(width: 100)
+                                        .frame(width: 110)
                                         .padding(.vertical, 22)
                                         .background(Color.white)
                                         .cornerRadius(14)
@@ -304,7 +300,7 @@ struct PaymentView: View {
                     .font(.custom("Inter_18pt-Medium", size: 13))
                     .foregroundColor(isAdd ? .textTertiary : .textPrimary)
             }
-            .frame(maxWidth: .infinity)
+            .frame(width: 110)
             .padding(.vertical, 22)
             .background(Color.white)
             .cornerRadius(14)

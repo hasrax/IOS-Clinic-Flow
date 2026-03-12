@@ -146,7 +146,7 @@ struct DoctorInfoHeader: View {
                     Spacer()
                     Text("Rs.\(String(format: "%.2f", Double(doctor.fee)))")
                         .font(.custom("Inter_18pt-Bold", size: 14))
-                        .foregroundColor(Color(hex: "F59E0B"))
+                        .foregroundColor(.primaryBlue)
                 }
                 
                 Text(doctor.specialty)
@@ -506,19 +506,34 @@ struct TimeSelectionSection: View {
     let timePeriods: [String]
     
     let morningSlots = [
-        TimeSlot(time: "8.30 AM", bookedCount: 3, maxCount: 8),
-        TimeSlot(time: "9.00 AM", bookedCount: 3, maxCount: 7),
-        TimeSlot(time: "9.30 AM", bookedCount: 8, maxCount: 8),
-        TimeSlot(time: "10.00 PM", bookedCount: 6, maxCount: 8),
-        TimeSlot(time: "10.30 PM", bookedCount: 8, maxCount: 8),
-        TimeSlot(time: "11.10 PM", bookedCount: 7, maxCount: 8),
+        TimeSlot(time: "8:30 AM",  bookedCount: 3, maxCount: 8),
+        TimeSlot(time: "9:00 AM",  bookedCount: 3, maxCount: 7),
+        TimeSlot(time: "9:30 AM",  bookedCount: 8, maxCount: 8),
+        TimeSlot(time: "10:00 AM", bookedCount: 6, maxCount: 8),
+        TimeSlot(time: "10:30 AM", bookedCount: 8, maxCount: 8),
+        TimeSlot(time: "11:00 AM", bookedCount: 7, maxCount: 8),
     ]
-    //sets which is an am and which is a pm
+    let afternoonSlots = [
+        TimeSlot(time: "12:00 PM", bookedCount: 2, maxCount: 8),
+        TimeSlot(time: "12:30 PM", bookedCount: 5, maxCount: 8),
+        TimeSlot(time: "1:00 PM",  bookedCount: 4, maxCount: 8),
+        TimeSlot(time: "1:30 PM",  bookedCount: 8, maxCount: 8),
+        TimeSlot(time: "2:00 PM",  bookedCount: 6, maxCount: 8),
+        TimeSlot(time: "2:30 PM",  bookedCount: 3, maxCount: 8),
+    ]
+    let eveningSlots = [
+        TimeSlot(time: "3:00 PM",  bookedCount: 1, maxCount: 8),
+        TimeSlot(time: "3:30 PM",  bookedCount: 4, maxCount: 8),
+        TimeSlot(time: "4:00 PM",  bookedCount: 8, maxCount: 8),
+        TimeSlot(time: "4:30 PM",  bookedCount: 2, maxCount: 8),
+        TimeSlot(time: "5:00 PM",  bookedCount: 7, maxCount: 8),
+        TimeSlot(time: "5:30 PM",  bookedCount: 6, maxCount: 8),
+    ]
     var currentSlots: [TimeSlot] {
         switch selectedTimePeriod {
-        case 0: return morningSlots
-        case 1: return morningSlots.map { TimeSlot(time: $0.time.replacingOccurrences(of: "AM", with: "PM"), bookedCount: $0.bookedCount, maxCount: $0.maxCount) }
-        case 2: return morningSlots.map { TimeSlot(time: $0.time.replacingOccurrences(of: "AM", with: "PM"), bookedCount: $0.bookedCount + 1, maxCount: $0.maxCount) }
+        case 0:  return morningSlots
+        case 1:  return afternoonSlots
+        case 2:  return eveningSlots
         default: return morningSlots
         }
     }
@@ -588,19 +603,20 @@ struct TimeSlotButton: View {
                     .font(.custom("Inter_18pt-SemiBold", size: 13))
                     .foregroundColor(
                         slot.isFull ? .textTertiary :
-                        isSelected ? .primaryBlue : .textPrimary
+                        isSelected ? .white : .textPrimary
                     )
                 Text(slot.displayText)
                     .font(.custom("Inter_18pt-Regular", size: 10))
                     .foregroundColor(
-                        slot.isFull ? .errorRed : .successGreen
+                        slot.isFull ? .errorRed :
+                        isSelected ? .white.opacity(0.85) : .successGreen
                     )
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(
                 slot.isFull ? Color(hex: "F9FAFB") :
-                isSelected ? Color.primaryBlueTint : Color.white
+                isSelected ? Color.primaryBlue : Color.white
             )
             .cornerRadius(10)
             .overlay(
@@ -795,7 +811,7 @@ struct PaymentSummarySection: View {
                     Spacer()
                     Text("LKR \(String(format: "%.2f", Double(totalAmount)))")
                         .font(.custom("Inter_18pt-Bold", size: 16))
-                        .foregroundColor(.primaryBlue)
+                        .foregroundColor(.successGreen)
                 }
                 
                 // options so the user can select to pay when they want to or select what and when to pay depending on their client level*
