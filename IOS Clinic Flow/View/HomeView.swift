@@ -24,7 +24,6 @@ struct HomeView: View {
     @State private var showPayment = false
     @State private var showEditProfile = false
     @State private var showCalendar = false
-    @State private var showProfile = false
     @State private var newUserName = ""
     @State private var newUserPhone = ""
 //Boolean Flags which are user to navigate to different places when toggled to true
@@ -43,7 +42,7 @@ struct HomeView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 0) {
                             // Header — same for both
-                            HomeHeaderView(showNotifications: $showNotifications, showProfile: $showProfile) //show notification is set as a two way binding here
+                            HomeHeaderView(showNotifications: $showNotifications) //show notification is set as a two way binding here
                                 .padding(.horizontal, 20)
                                 .padding(.top, 12)
                                 .padding(.bottom, 16)
@@ -117,9 +116,6 @@ struct HomeView: View {
             .navigationDestination(isPresented: $showCalendar) {
                 CalendarView()
             }
-            .navigationDestination(isPresented: $showProfile) {
-                ProfileView()
-            }
             .onAppear {
                 if AppRouter.shared.isNewUser && newUserPhone.isEmpty {
                     newUserPhone = "+94 \(AppRouter.shared.loggedInPhone)"
@@ -138,12 +134,11 @@ struct HomeView: View {
 // MARK: - Header (both screens)
 struct HomeHeaderView: View {
     @Binding var showNotifications: Bool
-    @Binding var showProfile: Bool
     @ObservedObject private var router = AppRouter.shared
 
     var body: some View {
         HStack(spacing: 12) {
-            Button { showProfile = true } label: {
+            Button { AppRouter.shared.pendingTab = .profile } label: {
                 if router.isNewUser {
                     Circle()
                         .fill(Color(hex: "D8DCE6"))
@@ -410,7 +405,7 @@ struct ReturningUserContent: View {
                 onPay: onPay,
                 onCalendar: onCalendar
             )
-            .padding(.bottom, 16)
+            .padding(.bottom, 24)
 
             // Appointments
             AppointmentsSection()
@@ -706,9 +701,11 @@ struct AppointmentsSection: View {
                 .font(.custom("Inter_18pt-Bold", size: 18))
                 .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
+                .padding(.top, 4)
+                .padding(.bottom, 4)
             AppointmentCard(
                 image: "doctor_kamal",
-                name: "DR. Kamal Yugasnan",
+                name: "Dr. Kamal Yugasnan",
                 specialty: "cardiologist",
                 bookingID: "BM240126-11",
                 date: "30 / 04 / 2026",
@@ -717,7 +714,7 @@ struct AppointmentsSection: View {
             .padding(.horizontal, 20)
             AppointmentCard(
                 image: "doctor_nipun",
-                name: "DR. Nipun Perera",
+                name: "Dr. Nipun Perera",
                 specialty: "Immunologist",
                 bookingID: "BM100126-04",
                 date: "01 / 05 / 2026",
