@@ -294,7 +294,7 @@ struct ProfileView: View {
         .navigationDestination(isPresented: $showPrescriptions) { PrescriptionsView() }
         .navigationDestination(isPresented: $showCompanion)     { CompanionView() }
         .navigationDestination(isPresented: $showLanguage)      { LanguageView() }
-        .navigationDestination(isPresented: $showPrivacy)       { PrivacySecurityView() }
+     
         .navigationDestination(isPresented: $showHelp)          { HelpSupportView() }
         .navigationDestination(isPresented: $showTerms)         { TermsPrivacyView() }
 
