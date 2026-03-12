@@ -165,13 +165,13 @@ struct LoginView: View {
                         Spacer()
                     }
                     
-                    Spacer().frame(height: 40)
+                    Spacer().frame(height: 70)
                 }
                 
                 // White card takes 62% of screen height
                 .frame(height: UIScreen.main.bounds.height * 0.62)
                 .frame(maxWidth: .infinity)
-                .background(Color.white)
+                .background(Color(hex: "EEF1F5"))
                 .clipShape(
                     UnevenRoundedRectangle(
                         topLeadingRadius: 36,
@@ -220,9 +220,10 @@ struct LoginView: View {
                         .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
                     if isSystem {
                         // Apple logo
-                        Image(systemName: "apple.logo")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(Color(hex: "1B3A6B"))
+                        Image("apple")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
                     } else {
                         // Google logo
                         Image("google")
