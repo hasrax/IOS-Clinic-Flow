@@ -406,11 +406,11 @@ struct ReturningUserContent: View {
                 .padding(.bottom, 24)
 
             // Companion
-            CompanionSection()
+            CompanionSection(onTap: onCompanion)
                 .padding(.bottom, 24)
 
             // Calendar
-            CalendarSection()
+            CalendarSection(onTap: onQueueTap)
                 .padding(.bottom, 24)
         }
     }
@@ -676,6 +676,12 @@ struct LiveQueueCard: View {
 struct AppointmentsSection: View {
     var body: some View {
         VStack(spacing: 10) {
+            Text("Upcoming Bookings")
+                .font(.custom("Inter_18pt-Bold", size: 18))
+                .foregroundColor(.primaryBlue)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 4)
             AppointmentCard(
                 image: "doctor_kamal",
                 name: "DR. Kamal Yugasnan",
@@ -767,7 +773,7 @@ struct HealthSummarySection: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Health Summary")
                 .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.textPrimary)
+                .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
 
             LazyVGrid(
@@ -873,13 +879,15 @@ struct HealthSummarySection: View {
 
 // companion mode used to change the companion levels and what the companion is suppiosed to do and what they are doing
 struct CompanionSection: View {
+    var onTap: () -> Void = {}
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Companion")
                 .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.textPrimary)
+                .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
 
+            Button(action: onTap) {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
@@ -907,19 +915,23 @@ struct CompanionSection: View {
             .cornerRadius(16)
             .shadow(color: .black.opacity(0.03), radius: 4, x: 0, y: 2)
             .padding(.horizontal, 20)
+            }
+            .buttonStyle(.plain)
         }
     }
 }
 
 // calendar
 struct CalendarSection: View {
+    var onTap: () -> Void = {}
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Calendar")
                 .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.textPrimary)
+                .foregroundColor(.primaryBlue)
                 .padding(.horizontal, 20)
 
+            Button(action: onTap) {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
@@ -947,6 +959,8 @@ struct CalendarSection: View {
             .cornerRadius(16)
             .shadow(color: .black.opacity(0.03), radius: 4, x: 0, y: 2)
             .padding(.horizontal, 20)
+            }
+            .buttonStyle(.plain)
         }
     }
 }
