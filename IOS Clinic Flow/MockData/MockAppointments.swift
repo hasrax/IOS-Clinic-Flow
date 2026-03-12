@@ -55,7 +55,28 @@ struct MockAppointments {
             steps: [],
             cancelReason: "Doctor unavailable", refunded: true
         ),
+        Appointment(
+            id: "BM260220-07", doctor: MockDoctors.all[3],
+            date: "Feb 20, 2026", time: "11:00 AM", status: .scheduled,
+            location: "Room 9N, Floor 1", token: "BM260220-07",
+            totalCost: 2500,
+            costs: [CostItem(label: "Consultation Fee", amount: 2500)],
+            steps: [],
+            cancelReason: nil, refunded: false
+        ),
+        Appointment(
+            id: "BM260226-03", doctor: MockDoctors.all[0],
+            date: "Feb 26, 2026", time: "2:30 PM", status: .scheduled,
+            location: "Room 89B, Floor 3", token: "BM260226-03",
+            totalCost: 1500,
+            costs: [CostItem(label: "Consultation Fee", amount: 1500)],
+            steps: [],
+            cancelReason: nil, refunded: false
+        ),
     ]
+
+    // All appointments used by CalendarView (history + future scheduled)
+    static var calendarAppointments: [Appointment] { history }
 //mock appointment histroy data to be used because stuff is static my guy
     static let currentQueue = QueueData(
         position: 3,

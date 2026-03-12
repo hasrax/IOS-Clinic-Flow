@@ -23,6 +23,8 @@ struct HomeView: View {
     @State private var showQueueStatus = false
     @State private var showPayment = false
     @State private var showEditProfile = false
+    @State private var showCalendar = false
+    @State private var showProfile = false
     @State private var newUserName = ""
     @State private var newUserPhone = ""
 //Boolean Flags which are user to navigate to different places when toggled to true
@@ -41,7 +43,7 @@ struct HomeView: View {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 0) {
                             // Header — same for both
-                            HomeHeaderView(showNotifications: $showNotifications) //show notification is set as a two way binding here
+                            HomeHeaderView(showNotifications: $showNotifications, showProfile: $showProfile) //show notification is set as a two way binding here
                                 .padding(.horizontal, 20)
                                 .padding(.top, 12)
                                 .padding(.bottom, 16)
@@ -64,7 +66,8 @@ struct HomeView: View {
                                     onPharmacy: { showPharmacy = true },
                                     onCompanion: { showCompanion = true },
                                     onQueueTap: { showQueueStatus = true },
-                                    onPay: { showPayment = true }
+                                    onPay: { showPayment = true },
+                                    onCalendar: { showCalendar = true }
                                 )
                             }
 
@@ -111,6 +114,12 @@ struct HomeView: View {
             .navigationDestination(isPresented: $showEditProfile) {
                 EditProfileView(name: $newUserName, phone: $newUserPhone)
             }
+            .navigationDestination(isPresented: $showCalendar) {
+                CalendarView()
+            }
+            .navigationDestination(isPresented: $showProfile) {
+                ProfileView()
+            }
             .onAppear {
                 if AppRouter.shared.isNewUser && newUserPhone.isEmpty {
                     newUserPhone = "+94 \(AppRouter.shared.loggedInPhone)"
@@ -129,30 +138,34 @@ struct HomeView: View {
 // MARK: - Header (both screens)
 struct HomeHeaderView: View {
     @Binding var showNotifications: Bool
+    @Binding var showProfile: Bool
     @ObservedObject private var router = AppRouter.shared
 
     var body: some View {
         HStack(spacing: 12) {
-            if router.isNewUser {
-                Circle()
-                    .fill(Color(hex: "D8DCE6"))
-                    .frame(width: 46, height: 46)
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(Color(hex: "8A93A6"))
-                    )
-            } else {
-                Image("malini_avatar")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 46, height: 46)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white, lineWidth: 2)
-                    )
+            Button { showProfile = true } label: {
+                if router.isNewUser {
+                    Circle()
+                        .fill(Color(hex: "D8DCE6"))
+                        .frame(width: 46, height: 46)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(hex: "8A93A6"))
+                        )
+                } else {
+                    Image("malini_avatar")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 46, height: 46)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 2)
+                        )
+                }
             }
+            .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Good Morning")
@@ -356,6 +369,7 @@ struct ReturningUserContent: View {
     var onCompanion: () -> Void = {}
     var onQueueTap: () -> Void = {}
     var onPay: () -> Void = {}
+    var onCalendar: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 0) {
@@ -393,7 +407,8 @@ struct ReturningUserContent: View {
                 onLab: onLab,
                 onPharmacy: onPharmacy,
                 onCompanion: onCompanion,
-                onPay: onPay
+                onPay: onPay,
+                onCalendar: onCalendar
             )
             .padding(.bottom, 16)
 
@@ -410,7 +425,7 @@ struct ReturningUserContent: View {
                 .padding(.bottom, 24)
 
             // Calendar
-            CalendarSection(onTap: onQueueTap)
+            CalendarSection(onTap: onCalendar)
                 .padding(.bottom, 24)
         }
     }
@@ -425,13 +440,24 @@ struct QuickActionsGrid: View {
     var onPharmacy: () -> Void = {}
     var onCompanion: () -> Void = {}
     var onPay: () -> Void = {}
+    var onCalendar: () -> Void = {}
 //to show that its not a first user mode
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Quick Actions")
-                .font(.custom("Inter_18pt-Bold", size: 18))
-                .foregroundColor(.primaryBlue)
-                .padding(.horizontal, 20)
+            HStack {
+                Text("Quick Actions")
+                    .font(.custom("Inter_18pt-Bold", size: 18))
+                    .foregroundColor(.primaryBlue)
+                Spacer()
+                Button(action: onCalendar) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.primaryBlue)
+                        .frame(width: 32, height: 32)
+                        .background(RoundedRectangle(cornerRadius: 9).fill(Color.primaryBlueTint))
+                }
+            }
+            .padding(.horizontal, 20)
 
             // Row 1
             HStack(spacing: 12) {
@@ -675,7 +701,7 @@ struct LiveQueueCard: View {
 // used to check the appointments and their level of appointment
 struct AppointmentsSection: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Upcoming Bookings")
                 .font(.custom("Inter_18pt-Bold", size: 18))
                 .foregroundColor(.primaryBlue)
@@ -688,6 +714,7 @@ struct AppointmentsSection: View {
                 date: "30 / 04 / 2026",
                 time: "16:00 pm"
             )
+            .padding(.horizontal, 20)
             AppointmentCard(
                 image: "doctor_nipun",
                 name: "DR. Nipun Perera",
@@ -696,8 +723,8 @@ struct AppointmentsSection: View {
                 date: "01 / 05 / 2026",
                 time: "18:00 pm"
             )
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
     }
 }
 //appoints that are static to set into since its static xxxx
@@ -889,11 +916,11 @@ struct CompanionSection: View {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.primaryBlueTint)
+                        .fill(Color(hex: "EDE9FE"))
                         .frame(width: 42, height: 42)
                     Image(systemName: "person.3.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(.primaryBlue)
+                        .foregroundColor(Color(hex: "7C3AED"))
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Amal Perera")
@@ -933,11 +960,11 @@ struct CalendarSection: View {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.primaryBlueTint)
+                        .fill(Color(hex: "FEF3C7"))
                         .frame(width: 42, height: 42)
                     Image(systemName: "calendar")
                         .font(.system(size: 16))
-                        .foregroundColor(.primaryBlue)
+                        .foregroundColor(Color(hex: "D97706"))
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Dr. Nimal Fernando")

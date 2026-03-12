@@ -51,7 +51,7 @@ struct OTPView: View {
             VStack(spacing: 0) {
                     
                     ZStack {
-                        LinearGradient.heroGradient
+                        LinearGradient.primaryGradientDeep
 
                         
                         Circle()

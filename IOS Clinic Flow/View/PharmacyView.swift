@@ -476,11 +476,14 @@ struct PharmacyPaymentView: View {
                         // Outstanding
                         ZStack {
                             RoundedRectangle(cornerRadius: 18)
-                                .fill(LinearGradient.primaryGradientDeep)
+                                .fill(LinearGradient(
+                                    colors: [Color(hex: "D97706"), Color(hex: "92400E")],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                ))
                             VStack(spacing: 8) {
                                 Text("TOTAL OUTSTANDING")
                                     .font(.custom("Inter_18pt-SemiBold", size: 11))
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .foregroundColor(.white.opacity(0.75))
                                     .tracking(1.5)
                                 Text("LKR \(selectedTotal)")
                                     .font(.custom("Inter_18pt-Black", size: 34))
@@ -615,6 +618,7 @@ struct PharmacyPaymentView: View {
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
         .navigationDestination(isPresented: $showAddCard) {
             AddCardView { _ in showAddCard = false }

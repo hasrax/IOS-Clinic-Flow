@@ -45,6 +45,10 @@ struct PaymentView: View {
                            subtitle: doctor.name, amount: totalAmount, isSelected: true),
             PendingPayItem(id: "registration", title: "Registration Fee",
                            subtitle: "First Visit",          amount: 200,         isSelected: true),
+            PendingPayItem(id: "lab", title: "Laboratory Fee",
+                           subtitle: "CBC Blood Test",        amount: 1800,        isSelected: false),
+            PendingPayItem(id: "pharmacy", title: "Pharmacy",
+                           subtitle: "Prescribed Medications", amount: 1200,       isSelected: false),
         ])
     }
 //initializing the states of the variables
@@ -60,25 +64,55 @@ struct PaymentView: View {
             Color.appBackground.ignoresSafeArea()
 //outstanding card design and its apprtopriate components
             VStack(spacing: 0) {
+                // Custom nav bar
+                HStack {
+                    Button { dismiss() } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.textPrimary)
+                    }
+                    Spacer()
+                    Text("Pay")
+                        .font(.custom("Inter_18pt-Bold", size: 18))
+                        .foregroundColor(.textPrimary)
+                    Spacer()
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.appBackground)
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
 
                     
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(LinearGradient.primaryGradientDeep)
-                            VStack(spacing: 8) {
-                                Text("TOTAL OUTSTANDING")
-                                    .font(.custom("Inter_18pt-SemiBold", size: 12))
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .tracking(1.5)
-                                Text("LKR \(formattedAmount(selectedTotal))")
-                                    .font(.custom("Inter_18pt-Black", size: 34))
-                                    .foregroundColor(.white)
+                        // summary card — clean white
+                        VStack(spacing: 6) {
+                            Text("TOTAL OUTSTANDING")
+                                .font(.custom("Inter_18pt-SemiBold", size: 11))
+                                .foregroundColor(.textSecondary)
+                                .tracking(1.4)
+                            Text("LKR \(formattedAmount(selectedTotal))")
+                                .font(.custom("Inter_18pt-Black", size: 38))
+                                .foregroundColor(.textPrimary)
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(Color.primaryBlue)
+                                    .frame(width: 6, height: 6)
+                                Text("\(selectedCount) item\(selectedCount == 1 ? "" : "s") selected")
+                                    .font(.custom("Inter_18pt-Regular", size: 12))
+                                    .foregroundColor(.textTertiary)
                             }
-                            .padding(.vertical, 28)
-                            .frame(maxWidth: .infinity)
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 24)
+                        .background(Color.white)
+                        .cornerRadius(16)
+                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.surfaceMuted, lineWidth: 1)
+                        )
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
 
@@ -185,29 +219,13 @@ struct PaymentView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .onChange(of: navTab) { _, tab in
             AppRouter.shared.pendingTab = tab
             dismiss()
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.textPrimary)
-                }
-            }
-            ToolbarItem(placement: .principal) {
-                Text("Pay")
-                    .font(.custom("Inter_18pt-Bold", size: 18))
-                    .foregroundColor(.textPrimary)
-            }
-        }
-        //tool bar with required information
+        //removed toolbar — custom nav used instead
         .navigationDestination(isPresented: $showAddCard) {
             AddCardView { card in
                 savedCards.append(card)
