@@ -459,8 +459,7 @@ struct LabPaymentView: View {
                                 .cornerRadius(14)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(isLabFeeSelected ? Color.primaryBlue : Color.surfaceMuted,
-                                                lineWidth: isLabFeeSelected ? 2 : 1)
+                                        .stroke(Color.surfaceMuted, lineWidth: 1)
                                 )
                             }
                             .padding(.horizontal, 20)

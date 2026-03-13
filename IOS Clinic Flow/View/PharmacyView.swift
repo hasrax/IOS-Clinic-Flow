@@ -538,8 +538,7 @@ struct PharmacyPaymentView: View {
                                 .cornerRadius(14)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(isFeeSelected ? Color.primaryBlue : Color.surfaceMuted,
-                                                lineWidth: isFeeSelected ? 2 : 1)
+                                        .stroke(Color.surfaceMuted, lineWidth: 1)
                                 )
                             }
                             .padding(.horizontal, 20)
