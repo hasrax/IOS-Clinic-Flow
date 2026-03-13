@@ -8,6 +8,12 @@
 
 import SwiftUI
 
+// MARK: - Payment mode selection
+private enum PaymentMode: Equatable {
+    case card(index: Int)
+    case cash
+}
+
 // MARK: - since we are allowing users to do pending payments as well throught this we can save appropriate data for tht
 private struct PendingPayItem: Identifiable {
     let id: String
@@ -25,31 +31,47 @@ struct PaymentView: View {
     let totalAmount: Int
 //the docs deets will be passed over from the other screen
     @State private var showPaymentSuccess = false
-    //navigation to the payment success poage
+    //navigation to the payment success page
+    @State private var showCashCounter = false
+    //navigation to cash counter instructions page
+    @State private var navigateHome = false
+    //direct navigation to home from bottom tab bar
     @State private var showAddCard = false
-    //nav to the add carde page
+    //nav to the add card page
     @State private var navTab: TabItem = .home
-    @State private var selectedCard = 0
-    //tracks payment card
+    @State private var paymentMode: PaymentMode = .card(index: 0)
+    //tracks selected payment method (card or cash)
     @State private var savedCards: [SavedCard] = []
 
     @State private var items: [PendingPayItem]
 
-    init(doctor: Doctor, selectedDate: Date, selectedTimeSlot: TimeSlot?, totalAmount: Int) {
+    let isFromBooking: Bool
+
+    init(doctor: Doctor, selectedDate: Date, selectedTimeSlot: TimeSlot?, totalAmount: Int, isFromBooking: Bool = false) {
         self.doctor = doctor
         self.selectedDate = selectedDate
         self.selectedTimeSlot = selectedTimeSlot
         self.totalAmount = totalAmount
-        _items = State(initialValue: [
-            PendingPayItem(id: "consultation", title: "Consultation Fee",
-                           subtitle: doctor.name, amount: totalAmount, isSelected: true),
-            PendingPayItem(id: "registration", title: "Registration Fee",
-                           subtitle: "First Visit",          amount: 200,         isSelected: true),
-            PendingPayItem(id: "lab", title: "Laboratory Fee",
-                           subtitle: "CBC Blood Test",        amount: 1800,        isSelected: false),
-            PendingPayItem(id: "pharmacy", title: "Pharmacy",
-                           subtitle: "Prescribed Medications", amount: 1200,       isSelected: false),
-        ])
+        self.isFromBooking = isFromBooking
+        if isFromBooking {
+            _items = State(initialValue: [
+                PendingPayItem(id: "consultation", title: "Consultation Fee",
+                               subtitle: doctor.name, amount: totalAmount, isSelected: true),
+                PendingPayItem(id: "registration", title: "Registration Fee",
+                               subtitle: "First Visit", amount: 200, isSelected: true),
+            ])
+        } else {
+            _items = State(initialValue: [
+                PendingPayItem(id: "consultation", title: "Consultation Fee",
+                               subtitle: doctor.name, amount: totalAmount, isSelected: true),
+                PendingPayItem(id: "registration", title: "Registration Fee",
+                               subtitle: "First Visit",          amount: 200,         isSelected: true),
+                PendingPayItem(id: "lab", title: "Laboratory Fee",
+                               subtitle: "CBC Blood Test",        amount: 1800,        isSelected: false),
+                PendingPayItem(id: "pharmacy", title: "Pharmacy",
+                               subtitle: "Prescribed Medications", amount: 1200,       isSelected: false),
+            ])
+        }
     }
 //initializing the states of the variables
     private var selectedTotal: Int { items.filter(\.isSelected).reduce(0) { $0 + $1.amount } }
@@ -66,10 +88,14 @@ struct PaymentView: View {
             VStack(spacing: 0) {
                 // Custom nav bar
                 HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                    if !isFromBooking {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.primaryBlue)
+                        }
+                    } else {
+                        Color.clear.frame(width: 24, height: 24)
                     }
                     Spacer()
                     Text("Pay")
@@ -135,14 +161,15 @@ struct PaymentView: View {
 
                             HStack(spacing: 12) {
                                 // Default Visa card
-                                Button { selectedCard = 0 } label: {
+                                let cardSelected = paymentMode == .card(index: 0)
+                                Button { paymentMode = .card(index: 0) } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "creditcard.fill")
                                             .font(.system(size: 22))
-                                            .foregroundColor(.primaryBlue)
+                                            .foregroundColor(cardSelected ? .primaryBlue : .textTertiary)
                                         Text("Visa ****4532")
                                             .font(.custom("Inter_18pt-Medium", size: 13))
-                                            .foregroundColor(.textPrimary)
+                                            .foregroundColor(cardSelected ? .textPrimary : .textTertiary)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 22)
@@ -150,8 +177,30 @@ struct PaymentView: View {
                                     .cornerRadius(14)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 14)
-                                            .stroke(selectedCard == 0 ? Color.primaryBlue : Color.surfaceMuted,
-                                                    lineWidth: selectedCard == 0 ? 2 : 1)
+                                            .stroke(cardSelected ? Color.primaryBlue : Color.surfaceMuted,
+                                                    lineWidth: cardSelected ? 2 : 1)
+                                    )
+                                }
+
+                                // Cash
+                                let cashSelected = paymentMode == .cash
+                                Button { paymentMode = .cash } label: {
+                                    VStack(spacing: 10) {
+                                        Image(systemName: "banknote")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(cashSelected ? Color(hex: "1B7C4E") : .textTertiary)
+                                        Text("Cash")
+                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .foregroundColor(cashSelected ? .textPrimary : .textTertiary)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 22)
+                                    .background(cashSelected ? Color(hex: "1B7C4E").opacity(0.07) : Color.white)
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(cashSelected ? Color(hex: "1B7C4E") : Color.surfaceMuted,
+                                                    lineWidth: cashSelected ? 2 : 1)
                                     )
                                 }
 
@@ -159,10 +208,10 @@ struct PaymentView: View {
                                 Button { showAddCard = true } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "plus")
-                                            .font(.system(size: 22))
+                                            .font(.system(size: 20))
                                             .foregroundColor(.textTertiary)
                                         Text("Add Card")
-                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .font(.custom("Inter_18pt-Medium", size: 12))
                                             .foregroundColor(.textTertiary)
                                     }
                                     .frame(maxWidth: .infinity)
@@ -196,14 +245,28 @@ struct PaymentView: View {
                             //checking how many items arselected and the price of each item
                         }
                         Spacer()
-                        Button { showPaymentSuccess = true } label: {
-                            Text("Pay Now")
-                                .font(.custom("Inter_18pt-SemiBold", size: 15))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 32)
-                                .padding(.vertical, 14)
-                                .background(selectedCount > 0 ? Color.primaryBlueDark : Color.textTertiary)
-                                .cornerRadius(12)
+                        Button {
+                            if paymentMode == .cash {
+                                showCashCounter = true
+                            } else {
+                                showPaymentSuccess = true
+                            }
+                        } label: {
+                            HStack(spacing: 8) {
+                                if paymentMode == .cash {
+                                    Image(systemName: "banknote")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                Text(paymentMode == .cash ? "Proceed with Cash" : "Pay Now")
+                                    .font(.custom("Inter_18pt-SemiBold", size: 15))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 26)
+                            .padding(.vertical, 14)
+                            .background(selectedCount > 0
+                                        ? (paymentMode == .cash ? Color(hex: "1B7C4E") : Color.primaryBlueDark)
+                                        : Color.textTertiary)
+                            .cornerRadius(12)
                         }
                         .disabled(selectedCount == 0)
                     }
@@ -211,7 +274,14 @@ struct PaymentView: View {
                     .padding(.vertical, 14)
                     .background(Color.white)
 //pay now button that can be disabled if bothing is selected
-                    BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                    BottomTabBar(selectedTab: $navTab, isNeutral: true) { tab in
+                        AppRouter.shared.pendingTab = tab
+                        if tab == .home {
+                            navigateHome = true
+                        } else {
+                            dismiss()
+                        }
+                    }
                 }
             }
         }
@@ -226,10 +296,8 @@ struct PaymentView: View {
         .navigationDestination(isPresented: $showAddCard) {
             AddCardView { card in
                 savedCards.append(card)
-                selectedCard = savedCards.count // select the newly added card
+                paymentMode = .card(index: savedCards.count) // select the newly added card
             }
-            
-            //movement tot the add card page
         }
         .navigationDestination(isPresented: $showPaymentSuccess) {
             BookingSuccessView(
@@ -237,9 +305,18 @@ struct PaymentView: View {
                 selectedDate: selectedDate,
                 selectedTimeSlot: selectedTimeSlot,
                 isPaid: true
-                
-                //goes to payment success page
             )
+        }
+        .navigationDestination(isPresented: $showCashCounter) {
+            CashCounterView(
+                totalAmount: selectedTotal,
+                doctorName: doctor.name,
+                itemCount: selectedCount
+            )
+        }
+        .navigationDestination(isPresented: $navigateHome) {
+            HomeView(isReturningUser: true)
+                .navigationBarBackButtonHidden(true)
         }
     }
 

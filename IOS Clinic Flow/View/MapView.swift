@@ -126,7 +126,6 @@ private let floorData: [FloorData] = [
             RoomInfo(name: "X-Ray",           x: 0.76, y: 0.58, width: 0.22, height: 0.30, category: .diagnostic),
         ],
         routes: [
-            // Helper: all routes go Entrance → corridor (y=0.50) → dest cx → into room
             RouteDefinition(from: "Entrance", to: "Reception",
                 waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.37, y: 0.50), CGPoint(x: 0.37, y: 0.58)],
                 steps: ["Exit the Entrance.", "Step into the main corridor.", "Walk right.", "Reception is on your right."]),
@@ -139,39 +138,23 @@ private let floorData: [FloorData] = [
             RouteDefinition(from: "Entrance", to: "Pharmacy",
                 waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.13, y: 0.50), CGPoint(x: 0.13, y: 0.42)],
                 steps: ["Exit the Entrance.", "Step into the main corridor.", "Turn left immediately.", "Pharmacy is directly ahead."]),
-            RouteDefinition(from: "Entrance", to: "Waiting Area",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.37, y: 0.50), CGPoint(x: 0.37, y: 0.42)],
-                steps: ["Exit the Entrance.", "Step into the main corridor.", "Walk right.", "Waiting Area is on the left side of the corridor."]),
-            RouteDefinition(from: "Entrance", to: "Consultation 1",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.61, y: 0.50), CGPoint(x: 0.61, y: 0.42)],
-                steps: ["Exit the Entrance.", "Step into the main corridor.", "Walk right, past the Waiting Area.", "Consultation 1 is on the left side."]),
-            RouteDefinition(from: "Entrance", to: "Consultation 2",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.86, y: 0.50), CGPoint(x: 0.86, y: 0.42)],
-                steps: ["Exit the Entrance.", "Step into the main corridor.", "Walk to the far end.", "Consultation 2 is on the left side."]),
             RouteDefinition(from: "Reception", to: "Laboratory",
                 waypoints: [CGPoint(x: 0.37, y: 0.58), CGPoint(x: 0.37, y: 0.50), CGPoint(x: 0.63, y: 0.50), CGPoint(x: 0.63, y: 0.58)],
                 steps: ["Exit Reception.", "Step into the corridor.", "Walk right.", "Laboratory is ahead."]),
-            RouteDefinition(from: "Pharmacy", to: "Consultation 1",
-                waypoints: [CGPoint(x: 0.13, y: 0.42), CGPoint(x: 0.13, y: 0.50), CGPoint(x: 0.61, y: 0.50), CGPoint(x: 0.61, y: 0.42)],
-                steps: ["Exit Pharmacy.", "Step into the corridor.", "Walk right.", "Consultation 1 is across the corridor."]),
         ],
         defaultFrom: "Entrance",
         defaultTo:   "Laboratory"
     ),
 
     // ── FLOOR 2  ──  Inpatient / Acute
-    // North wall: ICU | Ward A | Ward B | Nurses Station
-    // South wall: Elevator | Pharmacy Store | Radiology | Cardiology
     FloorData(
         floor: 2,
         floorName: "Inpatient",
         rooms: [
-            // North wall
             RoomInfo(name: "ICU",             x: 0.02, y: 0.02, width: 0.30, height: 0.40, category: .critical),
             RoomInfo(name: "Ward A",          x: 0.34, y: 0.02, width: 0.20, height: 0.40, category: .clinical),
             RoomInfo(name: "Ward B",          x: 0.56, y: 0.02, width: 0.20, height: 0.40, category: .clinical),
             RoomInfo(name: "Nurses Station",  x: 0.78, y: 0.02, width: 0.20, height: 0.40, category: .services),
-            // South wall
             RoomInfo(name: "Elevator",        x: 0.02, y: 0.58, width: 0.20, height: 0.30, category: .services, isEntrance: true),
             RoomInfo(name: "Pharmacy Store",  x: 0.24, y: 0.58, width: 0.22, height: 0.30, category: .diagnostic),
             RoomInfo(name: "Radiology",       x: 0.48, y: 0.58, width: 0.24, height: 0.30, category: .diagnostic),
@@ -181,47 +164,19 @@ private let floorData: [FloorData] = [
             RouteDefinition(from: "Elevator", to: "ICU",
                 waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.17, y: 0.50), CGPoint(x: 0.17, y: 0.42)],
                 steps: ["Exit the Elevator.", "Enter the corridor.", "Move left.", "ICU is directly across."]),
-            RouteDefinition(from: "Elevator", to: "Ward A",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.44, y: 0.50), CGPoint(x: 0.44, y: 0.42)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk right.", "Ward A is on the left side."]),
-            RouteDefinition(from: "Elevator", to: "Ward B",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.66, y: 0.50), CGPoint(x: 0.66, y: 0.42)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk right past Ward A.", "Ward B is on the left side."]),
-            RouteDefinition(from: "Elevator", to: "Nurses Station",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.88, y: 0.50), CGPoint(x: 0.88, y: 0.42)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk to the far end.", "Nurses Station is on the left."]),
-            RouteDefinition(from: "Elevator", to: "Pharmacy Store",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.35, y: 0.50), CGPoint(x: 0.35, y: 0.58)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk right.", "Pharmacy Store is on your right."]),
-            RouteDefinition(from: "Elevator", to: "Radiology",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.60, y: 0.50), CGPoint(x: 0.60, y: 0.58)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk right.", "Radiology is on your right."]),
-            RouteDefinition(from: "Elevator", to: "Cardiology",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.86, y: 0.50), CGPoint(x: 0.86, y: 0.58)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk to the far end.", "Cardiology is on the right."]),
-            RouteDefinition(from: "ICU", to: "Nurses Station",
-                waypoints: [CGPoint(x: 0.17, y: 0.42), CGPoint(x: 0.17, y: 0.50), CGPoint(x: 0.88, y: 0.50), CGPoint(x: 0.88, y: 0.42)],
-                steps: ["Exit the ICU.", "Enter the corridor.", "Walk right to the end.", "Nurses Station is ahead."]),
-            RouteDefinition(from: "Radiology", to: "ICU",
-                waypoints: [CGPoint(x: 0.60, y: 0.58), CGPoint(x: 0.60, y: 0.50), CGPoint(x: 0.17, y: 0.50), CGPoint(x: 0.17, y: 0.42)],
-                steps: ["Exit Radiology.", "Enter the corridor.", "Walk left.", "ICU is on the left side."]),
         ],
         defaultFrom: "Elevator",
         defaultTo:   "ICU"
     ),
 
     // ── FLOOR 3  ──  Surgical Suite
-    // North wall: Op. Theatre 1 | Op. Theatre 2 | Prep Room
-    // South wall: Elevator | Recovery | Scrub Room | Sterilisation
     FloorData(
         floor: 3,
         floorName: "Surgical",
         rooms: [
-            // North wall — theatres
             RoomInfo(name: "Op. Theatre 1",  x: 0.02, y: 0.02, width: 0.32, height: 0.40, category: .surgical),
             RoomInfo(name: "Op. Theatre 2",  x: 0.36, y: 0.02, width: 0.32, height: 0.40, category: .surgical),
             RoomInfo(name: "Prep Room",      x: 0.70, y: 0.02, width: 0.28, height: 0.40, category: .clinical),
-            // South wall — support
             RoomInfo(name: "Elevator",       x: 0.02, y: 0.58, width: 0.20, height: 0.30, category: .services, isEntrance: true),
             RoomInfo(name: "Recovery",       x: 0.24, y: 0.58, width: 0.26, height: 0.30, category: .critical),
             RoomInfo(name: "Scrub Room",     x: 0.52, y: 0.58, width: 0.22, height: 0.30, category: .support),
@@ -231,30 +186,6 @@ private let floorData: [FloorData] = [
             RouteDefinition(from: "Elevator", to: "Op. Theatre 1",
                 waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.18, y: 0.50), CGPoint(x: 0.18, y: 0.42)],
                 steps: ["Exit the Elevator.", "Enter the surgical corridor.", "Walk straight ahead.", "Op. Theatre 1 is directly opposite."]),
-            RouteDefinition(from: "Elevator", to: "Op. Theatre 2",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.52, y: 0.50), CGPoint(x: 0.52, y: 0.42)],
-                steps: ["Exit the Elevator.", "Enter the surgical corridor.", "Walk right.", "Op. Theatre 2 is on the left side."]),
-            RouteDefinition(from: "Elevator", to: "Prep Room",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.84, y: 0.50), CGPoint(x: 0.84, y: 0.42)],
-                steps: ["Exit the Elevator.", "Enter the surgical corridor.", "Walk to the far end.", "Prep Room is on the left."]),
-            RouteDefinition(from: "Elevator", to: "Recovery",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.37, y: 0.50), CGPoint(x: 0.37, y: 0.58)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk right.", "Recovery is on your right."]),
-            RouteDefinition(from: "Elevator", to: "Scrub Room",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.63, y: 0.50), CGPoint(x: 0.63, y: 0.58)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk right past Recovery.", "Scrub Room is on the right."]),
-            RouteDefinition(from: "Elevator", to: "Sterilisation",
-                waypoints: [CGPoint(x: 0.12, y: 0.58), CGPoint(x: 0.12, y: 0.50), CGPoint(x: 0.87, y: 0.50), CGPoint(x: 0.87, y: 0.58)],
-                steps: ["Exit the Elevator.", "Enter the corridor.", "Walk to the far end.", "Sterilisation is at the end right."]),
-            RouteDefinition(from: "Recovery", to: "Op. Theatre 1",
-                waypoints: [CGPoint(x: 0.37, y: 0.58), CGPoint(x: 0.37, y: 0.50), CGPoint(x: 0.18, y: 0.50), CGPoint(x: 0.18, y: 0.42)],
-                steps: ["Exit Recovery.", "Enter the corridor.", "Walk left.", "Op. Theatre 1 is opposite."]),
-            RouteDefinition(from: "Scrub Room", to: "Op. Theatre 2",
-                waypoints: [CGPoint(x: 0.63, y: 0.58), CGPoint(x: 0.63, y: 0.50), CGPoint(x: 0.52, y: 0.50), CGPoint(x: 0.52, y: 0.42)],
-                steps: ["Exit Scrub Room.", "Enter the corridor.", "Move left.", "Op. Theatre 2 is directly opposite."]),
-            RouteDefinition(from: "Op. Theatre 1", to: "Op. Theatre 2",
-                waypoints: [CGPoint(x: 0.18, y: 0.42), CGPoint(x: 0.18, y: 0.50), CGPoint(x: 0.52, y: 0.50), CGPoint(x: 0.52, y: 0.42)],
-                steps: ["Exit Op. Theatre 1.", "Enter the corridor.", "Walk right.", "Op. Theatre 2 is ahead."]),
         ],
         defaultFrom: "Elevator",
         defaultTo:   "Op. Theatre 1"
@@ -388,7 +319,7 @@ private struct RouteInputBar: View {
             }
             .buttonStyle(.plain)
 
-            // ── Expanded fields ────────────────────────────────────────────
+            // ── Expanded fields ──────────────────────────────────────────────────────
             if isExpanded {
                 VStack(spacing: 0) {
                     Divider().padding(.horizontal, 14)
@@ -514,11 +445,11 @@ private struct RouteInputBar: View {
             }
         }
         .background(Color(hex: "F8FAFF"))
-    }
+        }
 }
 
 // MARK: - Direction bottom sheet
-/// A compact bottom sheet that slides up over the map showing the current step + progress.
+
 private struct DirectionsSheet: View {
     let route: RouteDefinition
     @Binding var activeStep: Int
@@ -654,9 +585,6 @@ private struct DirectionsSheet: View {
     }
 }
 
-// RoundedCorner shape + cornerRadius(_:corners:) extension
-// are declared in your shared extensions file — no redeclaration needed here.
-
 // MARK: - Main view
 struct ClinicMapView: View {
     @Environment(\.dismiss) private var dismiss
@@ -684,7 +612,7 @@ struct ClinicMapView: View {
             Color(hex: "F4F6FA").ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // ── Nav bar ────────────────────────────────────────────────
+                // ── Nav bar ─────────────────────────────────────────────────────────────────
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
@@ -708,7 +636,7 @@ struct ClinicMapView: View {
                 .padding(.horizontal, 20).padding(.vertical, 12)
                 .background(Color.appBackground)
 
-                // ── Scrollable content ─────────────────────────────────────
+                // ── Scrollable content ─────────────────────────────────────────────────────────────
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
 
@@ -761,91 +689,6 @@ struct ClinicMapView: View {
                             RoundedRectangle(cornerRadius: 20).fill(Color.appBackground)
                             RoundedRectangle(cornerRadius: 20).stroke(Color.primaryBlueDark.opacity(0.25), lineWidth: 1.5)
 
-                            // Subtle dot grid
-                            Canvas { ctx, size in
-                                let spacing: CGFloat = size.width / 14
-                                var p = Path()
-                                var cx: CGFloat = spacing
-                                while cx < size.width {
-                                    var cy: CGFloat = spacing
-                                    while cy < size.height {
-                                        p.addEllipse(in: CGRect(x: cx - 1, y: cy - 1, width: 2, height: 2))
-                                        cy += spacing
-                                    }
-                                    cx += spacing
-                                }
-                                ctx.fill(p, with: .color(Color.primaryBlue.opacity(0.07)))
-                            }.cornerRadius(20)
-
-                            // Watermark
-                            Text("FLOOR \(selectedFloor + 1)")
-                                .font(.custom("Inter_18pt-Bold", size: 52))
-                                .foregroundColor(Color.primaryBlue.opacity(0.04))
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-
-                            // North indicator
-                            VStack(spacing: 2) {
-                                Image(systemName: "arrow.up").font(.system(size: 9, weight: .bold))
-                                Text("N").font(.custom("Inter_18pt-Bold", size: 8))
-                            }
-                            .foregroundColor(Color.primaryBlueDark.opacity(0.4))
-                            .padding(10)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-
-                            // Tap mode banner
-                            if pickingFor != .none {
-                                HStack(spacing: 8) {
-                                    Circle()
-                                        .fill(pickingFor == .from ? Color.primaryBlueDark : Color(hex: "5DB874"))
-                                        .frame(width: 8, height: 8)
-                                    Text(pickingFor == .from ? "Tap a room to set as Start" : "Tap a room to set as Destination")
-                                        .font(.custom("Inter_18pt-SemiBold", size: 12))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                    Button {
-                                        withAnimation(.spring()) { pickingFor = .none }
-                                    } label: {
-                                        Image(systemName: "xmark")
-                                            .font(.system(size: 10, weight: .bold))
-                                            .foregroundColor(.white.opacity(0.7))
-                                            .padding(5)
-                                            .background(Color.white.opacity(0.2))
-                                            .cornerRadius(6)
-                                    }
-                                }
-                                .padding(.horizontal, 14).padding(.vertical, 9)
-                                .background(pickingFor == .from ? Color.primaryBlueDark.opacity(0.90) : Color(hex: "5DB874").opacity(0.92))
-                                .cornerRadius(14)
-                                .padding(.top, 12)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                                .zIndex(5)
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                            }
-
-                            // Corner legend badge
-                            VStack(alignment: .leading, spacing: 5) {
-                                legendBadgeRow(color: Color.primaryBlueDark, border: .clear, label: "Start / Entrance")
-                                legendBadgeRow(color: Color(hex: "DBE9FF"), border: Color(hex: "60A5FA"), label: "Room")
-                                legendBadgeRow(color: Color(hex: "BFDBFE"), border: Color(hex: "3B82F6"), label: "Critical / ICU")
-                            }
-                            .padding(8)
-                            .background(Color.appBackground.opacity(0.95))
-                            .cornerRadius(10)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.primaryBlueDark.opacity(0.15), lineWidth: 1))
-                            .padding(10)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                            .zIndex(4)
-
-                            // Zoom hint
-                            HStack(spacing: 4) {
-                                Image(systemName: "hand.pinch").font(.system(size: 9))
-                                Text("Pinch  •  2× reset").font(.custom("Inter_18pt-Regular", size: 9))
-                            }
-                            .foregroundColor(Color.primaryBlueDark.opacity(0.35))
-                            .padding(8)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                            .zIndex(4)
-
                             // Zoomable map content
                             GeometryReader { geo in
                                 let w = geo.size.width - 20; let h = geo.size.height - 20
@@ -862,56 +705,23 @@ struct ClinicMapView: View {
                                 .padding(10)
                                 .scaleEffect(mapScale, anchor: .center)
                                 .offset(mapOffset)
-                                .gesture(
-                                    SimultaneousGesture(
-                                        MagnificationGesture().onChanged { v in
-                                            let s = max(1.0, min(3.5, v))
-                                            mapScale = s
-                                            let eW = max(0, geo.size.width * (s - 1)) / 2
-                                            let eH = max(0, geo.size.height * (s - 1)) / 2
-                                            mapOffset = CGSize(
-                                                width: mapOffset.width.clamped(to: -eW...eW),
-                                                height: mapOffset.height.clamped(to: -eH...eH))
-                                            lastOffset = mapOffset
-                                        },
-                                        DragGesture(minimumDistance: 1)
-                                            .onChanged { v in
-                                                let proposed = CGSize(
-                                                    width: lastOffset.width + v.translation.width,
-                                                    height: lastOffset.height + v.translation.height)
-                                                let eW = max(0, geo.size.width * (mapScale - 1)) / 2
-                                                let eH = max(0, geo.size.height * (mapScale - 1)) / 2
-                                                mapOffset = CGSize(
-                                                    width: proposed.width.clamped(to: -eW...eW),
-                                                    height: proposed.height.clamped(to: -eH...eH))
-                                            }
-                                            .onEnded { _ in lastOffset = mapOffset }
-                                    )
-                                )
-                                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: selectedFloor)
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
-                        // Fixed map height — tall enough to read clearly, short enough to scroll past
                         .frame(height: 420)
                         .padding(.horizontal, 16).padding(.top, 12)
                         .shadow(color: Color.primaryBlue.opacity(0.10), radius: 16, x: 0, y: 6)
-                        .onTapGesture(count: 2) {
-                            withAnimation(.spring()) { mapScale = 1; mapOffset = .zero; lastOffset = .zero }
-                        }
 
-                        // Directions card (inline when sheet is dismissed)
+                        // Directions card
                         if let route = activeRoute {
                             DirectionsSheet(route: route, activeStep: $activeStep, isExpanded: $directionsExpanded)
                                 .padding(.horizontal, 16).padding(.top, 12)
                         }
 
-                        // Bottom padding to clear the tab bar
+                        // Bottom padding
                         Spacer().frame(height: 100)
                     }
                 }
-                // Disable vertical scroll bounce inside the map gesture area
-                // (ScrollView handles the outer scroll; inner gestures handle pan/zoom)
 
                 BottomTabBar(selectedTab: $navTab)
             }
@@ -929,18 +739,9 @@ struct ClinicMapView: View {
 
     // MARK: - Room tap
     private func handleRoomTap(_ name: String) {
-        if pickingFor == .none {
-            // Double-tap-like shortcut: set as destination
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                toText = name
-                if fromText.isEmpty { fromText = floor.defaultFrom }
-                resolveRoute()
-            }
-            return
-        }
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            if pickingFor == .from { fromText = name; pickingFor = .to }
-            else { toText = name; pickingFor = .none }
+            toText = name
+            if fromText.isEmpty { fromText = floor.defaultFrom }
             resolveRoute()
         }
     }
@@ -962,7 +763,7 @@ struct ClinicMapView: View {
         }
     }
 
-    // MARK: - Corridor layer — single central spine
+    // MARK: - Corridor layer
     @ViewBuilder
     private func corridorLayer(w: CGFloat, h: CGFloat) -> some View {
         Canvas { ctx, _ in
@@ -970,141 +771,66 @@ struct ClinicMapView: View {
             let wallPath = Path(roundedRect: CGRect(x: 0.01*w, y: 0.01*h, width: 0.98*w, height: 0.98*h), cornerRadius: 10)
             ctx.stroke(wallPath, with: .color(Color(hex: "94A3B8").opacity(0.30)), style: StrokeStyle(lineWidth: 1.5))
 
-            // Central spine corridor y 0.44–0.56
+            // Central spine corridor
             var spine = Path()
             spine.addRoundedRect(in: CGRect(x: 0.01*w, y: 0.44*h, width: 0.98*w, height: 0.12*h),
                                  cornerSize: CGSize(width: 6, height: 6))
             ctx.fill(spine, with: .color(Color(hex: "DBEAFE").opacity(0.55)))
             ctx.stroke(spine, with: .color(Color(hex: "93C5FD").opacity(0.70)), lineWidth: 1.0)
-
-            // Centre-line dashes
-            var dash = Path()
-            let dashY = 0.50 * h
-            var dxPos: CGFloat = 0.06 * w
-            while dxPos < 0.96 * w {
-                dash.move(to: CGPoint(x: dxPos, y: dashY))
-                dash.addLine(to: CGPoint(x: min(dxPos + 0.04*w, 0.96*w), y: dashY))
-                dxPos += 0.07 * w
-            }
-            ctx.stroke(dash, with: .color(Color(hex: "BFDBFE").opacity(0.65)),
-                       style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [4, 6]))
-
-            // Door stubs — tick mark from each room to the corridor
-            for room in floor.rooms {
-                let doorX = (room.x + room.width / 2) * w
-                let isNorth = room.cy < 0.50
-                let doorY1: CGFloat = isNorth ? 0.44 * h : 0.56 * h
-                let doorY2: CGFloat = isNorth ? 0.41 * h : 0.59 * h
-                var stub = Path()
-                stub.move(to: CGPoint(x: doorX, y: doorY1))
-                stub.addLine(to: CGPoint(x: doorX, y: doorY2))
-                ctx.stroke(stub, with: .color(Color(hex: "93C5FD").opacity(0.45)),
-                           style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            }
         }
     }
 
-    // MARK: - Room cell — category-coloured with icon
+    // MARK: - Room cell
     private func roomCell(room: RoomInfo, w: CGFloat, h: CGFloat) -> some View {
         let rw = room.width * w;  let rh = room.height * h
         let rx = room.x * w + rw / 2; let ry = room.y * h + rh / 2
         let isFrom  = room.name == fromText
         let isDest  = room.name == toText
-        let dimmed  = pickingFor != .none && !isFrom && !isDest
 
-        // State overrides category colours when selected
         let fillColor: Color  = isFrom ? Color.primaryBlueDark
                               : isDest ? Color(hex: "D4EDD6")
                               : room.category.fill
         let borderColor: Color = isFrom ? Color.primaryBlueDark
                                : isDest  ? Color(hex: "5DB874")
                                : room.category.border
-        let textColor: Color   = isFrom ? .white
-                               : isDest  ? Color(hex: "1E5631")
-                               : room.category.textColor
-        let iconColor: Color   = isFrom ? .white.opacity(0.7)
-                               : isDest  ? Color(hex: "2E7D32").opacity(0.6)
-                               : room.category.border.opacity(0.55)
 
         return ZStack(alignment: .center) {
-            // Background
             RoundedRectangle(cornerRadius: 9)
                 .fill(fillColor)
                 .overlay(RoundedRectangle(cornerRadius: 9)
                     .stroke(borderColor, lineWidth: (isFrom || isDest) ? 2 : 1))
-                .overlay(dimmed
-                    ? RoundedRectangle(cornerRadius: 9).fill(Color.black.opacity(0.15))
-                    : nil)
 
-            // Content: icon above name
             VStack(spacing: 3) {
                 Image(systemName: isFrom ? "location.fill"
                                : isDest  ? "mappin.circle.fill"
                                : room.category.icon)
                     .font(.system(size: min(rw, rh) * 0.18, weight: .medium))
-                    .foregroundColor(iconColor)
+                    .foregroundColor(.white)
 
                 Text(room.name)
                     .font(.custom("Inter_18pt-SemiBold", size: min(rw * 0.13, 9)))
-                    .foregroundColor(textColor)
+                    .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
                     .padding(.horizontal, 4)
             }
-
-            // Destination / start dot
-            if isDest {
-                Circle().fill(Color(hex: "5DB874")).frame(width: 7, height: 7)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .padding(5)
-            }
-            if isFrom && !room.isEntrance {
-                Circle().fill(Color.white.opacity(0.75)).frame(width: 7, height: 7)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .padding(5)
-            }
         }
         .frame(width: rw, height: rh).position(x: rx, y: ry)
-        .shadow(color: borderColor.opacity(isFrom || isDest ? 0.30 : 0.12), radius: isFrom || isDest ? 6 : 3, x: 0, y: 2)
         .scaleEffect((isFrom || isDest) ? 1.02 : 1.0)
         .animation(.spring(response: 0.2), value: isFrom || isDest)
     }
 
-    // MARK: - Route layer (identical to original)
+    // MARK: - Route layer
     @ViewBuilder
     private func routeLayer(route: RouteDefinition, w: CGFloat, h: CGFloat) -> some View {
         let pts = route.waypoints.map { CGPoint(x: $0.x * w, y: $0.y * h) }
         if pts.count < 2 { EmptyView() } else {
-            let start = pts.first!; let end = pts.last!
             let routePath = Path { p in p.move(to: pts[0]); for pt in pts.dropFirst() { p.addLine(to: pt) } }
-            let prev = pts[pts.count - 2]
-            let dx = end.x - prev.x; let dy = end.y - prev.y
-            let len = max(sqrt(dx*dx + dy*dy), 0.001)
-            let ux = dx / len; let uy = dy / len
-
             ZStack {
                 routePath.stroke(Color.primaryBlueDark.opacity(0.18), style: StrokeStyle(lineWidth: 8, lineCap: .round, lineJoin: .round))
                 AnimatedRoute(path: routePath, color: Color.primaryBlueDark)
-                Path { p in
-                    let tip  = CGPoint(x: end.x - ux * 2, y: end.y - uy * 2)
-                    let perp = CGPoint(x: -uy, y: ux)
-                    p.move(to: CGPoint(x: tip.x + ux * 11, y: tip.y + uy * 11))
-                    p.addLine(to: CGPoint(x: tip.x - perp.x * 5.5, y: tip.y - perp.y * 5.5))
-                    p.addLine(to: CGPoint(x: tip.x + perp.x * 5.5, y: tip.y + perp.y * 5.5))
-                    p.closeSubpath()
-                }.fill(Color.primaryBlueDark)
-                PulsingDot(position: start, color: Color.primaryBlueDark)
+                PulsingDot(position: pts.first!, color: Color.primaryBlueDark)
             }
-        }
-    }
-
-    // MARK: - Legend badge row
-    private func legendBadgeRow(color: Color, border: Color, label: String) -> some View {
-        HStack(spacing: 5) {
-            RoundedRectangle(cornerRadius: 3).fill(color)
-                .overlay(RoundedRectangle(cornerRadius: 3).stroke(border, lineWidth: 1))
-                .frame(width: 12, height: 12)
-            Text(label).font(.custom("Inter_18pt-Regular", size: 9)).foregroundColor(.textSecondary)
         }
     }
 }

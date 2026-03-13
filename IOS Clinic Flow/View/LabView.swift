@@ -123,7 +123,7 @@ struct LabView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Laboratory")
@@ -191,27 +191,39 @@ struct LabView: View {
                                 .padding(.horizontal, 20)
                             }
 
-                            if selectedTab == .upcoming {
-                                Button { showPayment = true } label: {
-                                    Text("Pay Lab Fee")
-                                        .font(.custom("Inter_18pt-Bold", size: 16))
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 17)
-                                        .background(LinearGradient.primaryGradient)
-                                        .cornerRadius(14)
-                                }
-                                .padding(.horizontal, 20)
-                                .padding(.top, 8)
-                            }
-
-                            Spacer().frame(height: 100)
+                            // Remove the Pay Lab Fee button from here - moving to bottom
+                            Spacer().frame(height: selectedTab == .upcoming ? 120 : 100) // Extra space for bottom button
                         }
                         .padding(.top, 4)
                     }
                 }
-
-                BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                
+                // Fixed bottom payment button - better UX according to standards
+                if selectedTab == .upcoming {
+                    VStack(spacing: 0) {
+                        Divider()
+                        
+                        Button { showPayment = true } label: {
+                            Text("Pay Lab Fee")
+                                .font(.custom("Inter_18pt-Bold", size: 16))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 17)
+                                .background(LinearGradient.primaryGradient)
+                                .cornerRadius(14)
+                        }
+                        .accessibilityLabel("Pay Lab Fee")
+                        .accessibilityHint("Tap to proceed with lab test payment")
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 6)
+                        .background(Color.white)
+                        
+                        BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                    }
+                } else {
+                    BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                }
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -346,9 +358,12 @@ struct LabTestCard: View {
 // MARK: - Lab Payment
 struct LabPaymentView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var isLabFeeSelected = true //to see if the lab fee checkbox has selected or not 
-    @State private var selectedCard = 0 // 0 = current card, 1 = new card
+    @State private var isLabFeeSelected = true //to see if the lab fee checkbox has selected or not
+    @State private var isCash = false           // true = cash selected
+    @State private var selectedCard = 0
     @State private var showSuccess = false
+    @State private var showCashCounter = false
+    @State private var navigateHome = false
     @State private var showAddCard = false
     @State private var navTab: TabItem = .home
 
@@ -364,7 +379,7 @@ struct LabPaymentView: View {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primaryBlue)
                     }
                     Spacer()
                     Text("Payments")
@@ -382,10 +397,7 @@ struct LabPaymentView: View {
                         // Outstanding amount card
                         ZStack {
                             RoundedRectangle(cornerRadius: 18)
-                                .fill(LinearGradient(
-                                    colors: [Color(hex: "059669"), Color(hex: "065F46")],
-                                    startPoint: .topLeading, endPoint: .bottomTrailing
-                                ))
+                                .fill(LinearGradient.primaryGradientDeep)
                             VStack(spacing: 8) {
                                 Text("TOTAL OUTSTANDING")
                                     .font(.custom("Inter_18pt-SemiBold", size: 11))
@@ -463,44 +475,53 @@ struct LabPaymentView: View {
 
                             HStack(spacing: 12) {
                                 // Visa card
-                                Button { selectedCard = 0 } label: {
+                                let cardSel = !isCash && selectedCard == 0
+                                Button { isCash = false; selectedCard = 0 } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "creditcard.fill")
                                             .font(.system(size: 22))
-                                            .foregroundColor(.textPrimary)
+                                            .foregroundColor(cardSel ? .primaryBlue : .textTertiary)
                                         Text("Visa ****4532")
                                             .font(.custom("Inter_18pt-Medium", size: 13))
-                                            .foregroundColor(.textPrimary)
+                                            .foregroundColor(cardSel ? .textPrimary : .textTertiary)
                                     }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 22)
-                                    .background(Color.white)
+                                    .frame(maxWidth: .infinity).padding(.vertical, 22)
+                                    .background(Color.white).cornerRadius(14)
+                                    .overlay(RoundedRectangle(cornerRadius: 14)
+                                        .stroke(cardSel ? Color.primaryBlue : Color.surfaceMuted,
+                                                lineWidth: cardSel ? 2 : 1))
+                                }
+                                // Cash
+                                Button { isCash = true } label: {
+                                    VStack(spacing: 10) {
+                                        Image(systemName: "banknote")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(isCash ? Color(hex: "1B7C4E") : .textTertiary)
+                                        Text("Cash")
+                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .foregroundColor(isCash ? .textPrimary : .textTertiary)
+                                    }
+                                    .frame(maxWidth: .infinity).padding(.vertical, 22)
+                                    .background(isCash ? Color(hex: "1B7C4E").opacity(0.07) : Color.white)
                                     .cornerRadius(14)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(selectedCard == 0 ? Color.primaryBlue : Color.surfaceMuted,
-                                                    lineWidth: selectedCard == 0 ? 2 : 1)
-                                    )
+                                    .overlay(RoundedRectangle(cornerRadius: 14)
+                                        .stroke(isCash ? Color(hex: "1B7C4E") : Color.surfaceMuted,
+                                                lineWidth: isCash ? 2 : 1))
                                 }
                                 // Add card
                                 Button { showAddCard = true } label: {
                                     VStack(spacing: 10) {
                                         Image(systemName: "plus")
-                                            .font(.system(size: 22))
+                                            .font(.system(size: 20))
                                             .foregroundColor(.textTertiary)
                                         Text("Add Card")
-                                            .font(.custom("Inter_18pt-Medium", size: 13))
+                                            .font(.custom("Inter_18pt-Medium", size: 12))
                                             .foregroundColor(.textTertiary)
                                     }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 22)
-                                    .background(Color.white)
-                                    .cornerRadius(14)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(selectedCard == 1 ? Color.primaryBlue : Color.surfaceMuted,
-                                                    lineWidth: selectedCard == 1 ? 2 : 1)
-                                    )
+                                    .frame(maxWidth: .infinity).padding(.vertical, 22)
+                                    .background(Color.white).cornerRadius(14)
+                                    .overlay(RoundedRectangle(cornerRadius: 14)
+                                        .stroke(Color.surfaceMuted, lineWidth: 1))
                                 }
                             }
                             .padding(.horizontal, 20)
@@ -524,16 +545,23 @@ struct LabPaymentView: View {
                                 .foregroundColor(.primaryBlue)
                         }
                         Spacer()
-                        Button { showSuccess = true } label: {
-                            Text("Pay Now")
-                                .font(.custom("Inter_18pt-SemiBold", size: 15))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 32)
-                                .padding(.vertical, 14)
-                                .background(isLabFeeSelected
-                                            ? AnyView(LinearGradient.primaryGradient)
-                                            : AnyView(Color.textTertiary))
-                                .cornerRadius(12)
+                        Button {
+                            if isCash { showCashCounter = true } else { showSuccess = true }
+                        } label: {
+                            HStack(spacing: 8) {
+                                if isCash {
+                                    Image(systemName: "banknote")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                Text(isCash ? "Proceed with Cash" : "Pay Now")
+                                    .font(.custom("Inter_18pt-SemiBold", size: 15))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 26).padding(.vertical, 14)
+                            .background(isLabFeeSelected
+                                        ? (isCash ? AnyView(Color(hex: "1B7C4E")) : AnyView(LinearGradient.primaryGradient))
+                                        : AnyView(Color.textTertiary))
+                            .cornerRadius(12)
                         }
                         .disabled(!isLabFeeSelected)
                     }
@@ -542,7 +570,14 @@ struct LabPaymentView: View {
                     .background(Color.white)
                 }
 
-                BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true) { tab in
+                    AppRouter.shared.pendingTab = tab
+                    if tab == .home {
+                        navigateHome = true
+                    } else {
+                        dismiss()
+                    }
+                }
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -555,161 +590,198 @@ struct LabPaymentView: View {
         .navigationDestination(isPresented: $showSuccess) {
             LabPaymentSuccessView()
         }
+        .navigationDestination(isPresented: $showCashCounter) {
+            CashCounterView(totalAmount: labFeeAmount, doctorName: "Laboratory", itemCount: 1)
+        }
+        .navigationDestination(isPresented: $navigateHome) {
+            HomeView(isReturningUser: true)
+                .navigationBarBackButtonHidden(true)
+        }
     }
 }
 
 // MARK: - Lab Payment Success
 struct LabPaymentSuccessView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var navigateHome = false //triggers navigation back to homeview
     @State private var navTab: TabItem = .home
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             Color.appBackground.ignoresSafeArea()
 
-            // Blue curved header
             VStack(spacing: 0) {
-                ZStack {
-                    LabSuccessCurveShape()
-                        .fill(LinearGradient.primaryGradientDeep)
-                        .frame(height: 320)
-
-                    VStack(spacing: 14) {
-                        Spacer().frame(height: 40)
-                        ZStack {
-                            Circle()
-                                .fill(Color.successGreen)
-                                .frame(width: 64, height: 64)
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 26, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        Text("Successful !")
-                            .font(.custom("Inter_18pt-ExtraBold", size: 26))
-                            .foregroundColor(.white)
-                        Text("Your lab payment has been paid\nsuccessfully")
-                            .font(.custom("Inter_18pt-Regular", size: 14))
-                            .foregroundColor(.white.opacity(0.8))
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.top, 20)
-                }
-                Spacer()
-            }
-
-            // Receipt card + button
-            VStack(spacing: 0) {
-                Spacer().frame(height: 230)
-
-                VStack(spacing: 16) {
-                    // Receipt card
+                ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        VStack(spacing: 6) {
-                            Text("LAB NO")
-                                .font(.custom("Inter_18pt-Regular", size: 11))
-                                .foregroundColor(.textTertiary)
-                                .tracking(1)
-                            Text("LAB-0089")
-                                .font(.custom("Inter_18pt-Black", size: 28))
-                                .foregroundColor(.primaryBlue)
-                        }
-                        .padding(.vertical, 18)
 
-                        Divider().padding(.horizontal, 16)
-
-                        // Doctor row
-                        HStack(spacing: 12) {
-                            Image("doctor_kamal")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 46, height: 46)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.borderMedium, lineWidth: 1))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Dr. Anil Ranasinghe")
-                                    .font(.custom("Inter_18pt-Bold", size: 15))
-                                    .foregroundColor(.textPrimary)
-                                Text("Genral Medicine")
-                                    .font(.custom("Inter_18pt-Regular", size: 12))
-                                    .foregroundColor(.textSecondary)
+                        // Blue header
+                        VStack(spacing: 0) {
+                            HStack {
+                                Button { dismiss() } label: {
+                                    Image(systemName: "chevron.left")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundColor(.white)
+                                }
+                                Spacer()
+                                Text("Payment")
+                                    .font(.custom("Inter_18pt-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Color.clear.frame(width: 24, height: 24)
                             }
-                            Spacer()
+                            .padding(.horizontal, 24)
+                            .padding(.top, 60)
+                            .padding(.bottom, 8)
+
+                            ZStack {
+                                Circle()
+                                    .fill(Color.successGreen)
+                                    .frame(width: 70, height: 70)
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 32, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.top, 16)
+
+                            Text("Successful !")
+                                .font(.custom("Inter_18pt-Bold", size: 22))
+                                .foregroundColor(.white)
+                                .padding(.top, 16)
+
+                            Text("Your lab payment has been paid\nsuccessfully")
+                                .font(.custom("Inter_18pt-Regular", size: 14))
+                                .foregroundColor(.white.opacity(0.85))
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 8)
+                                .padding(.bottom, 60)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 14)
+                        .background(
+                            LinearGradient.primaryGradient
+                                .ignoresSafeArea(edges: .top)
+                                .clipShape(UnevenRoundedRectangle(
+                                    topLeadingRadius: 0,
+                                    bottomLeadingRadius: 28,
+                                    bottomTrailingRadius: 28,
+                                    topTrailingRadius: 0,
+                                    style: .continuous
+                                ))
+                        )
 
-                        Divider().padding(.horizontal, 16)
-
-                        // Detail rows
-                        VStack(spacing: 12) {
-                            receiptRow(icon: "calendar", label: "Date", value: "February 25, 2026")
-                            receiptRow(icon: "clock", label: "Time", value: "10.00 AM")
-                            receiptRow(icon: "mappin.circle", label: "Location", value: "Lab Room 3, Floor 1")
-                            HStack(spacing: 10) {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(.textSecondary)
-                                    .frame(width: 18)
-                                Text("Patient")
+                        VStack(spacing: 0) {
+                            VStack(spacing: 4) {
+                                Text("Lab No")
                                     .font(.custom("Inter_18pt-Regular", size: 13))
                                     .foregroundColor(.textSecondary)
+                                Text("LAB-0089")
+                                    .font(.custom("Inter_18pt-ExtraBold", size: 28))
+                                    .foregroundColor(.textPrimary)
+                            }
+                            .padding(.top, 20)
+
+                            Divider().padding(.horizontal, 20)
+
+                            HStack(spacing: 12) {
+                                Image("doctor_kamal")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Dr. Anil Ranasinghe")
+                                        .font(.custom("Inter_18pt-Bold", size: 15))
+                                        .foregroundColor(.textPrimary)
+                                    Text("General Medicine")
+                                        .font(.custom("Inter_18pt-Regular", size: 12))
+                                        .foregroundColor(.textSecondary)
+                                }
                                 Spacer()
-                                HStack(spacing: 6) {
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+
+                            Divider().padding(.horizontal, 20)
+
+                            VStack(spacing: 12) {
+                                receiptRow(icon: "calendar", label: "Date", value: "February 25, 2026")
+                                receiptRow(icon: "clock", label: "Time", value: "10.00 AM")
+                                receiptRow(icon: "mappin", label: "Location", value: "Lab Room 3, Floor 1")
+                                HStack(spacing: 10) {
+                                    Image(systemName: "person")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.textTertiary)
+                                        .frame(width: 20)
+                                    Text("Patient")
+                                        .font(.custom("Inter_18pt-Regular", size: 13))
+                                        .foregroundColor(.textSecondary)
+                                    Text("Mahel Perera")
+                                        .font(.custom("Inter_18pt-Medium", size: 13))
+                                        .foregroundColor(.textPrimary)
                                     Text("Spouse")
                                         .font(.custom("Inter_18pt-Medium", size: 11))
                                         .foregroundColor(.primaryBlue)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 3)
-                                        .background(Capsule().fill(Color.primaryBlueTint))
-                                    Text("Mahel Perera")
-                                        .font(.custom("Inter_18pt-SemiBold", size: 13))
-                                        .foregroundColor(.textPrimary)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(Color.primaryBlueTint)
+                                        .cornerRadius(12)
+                                    Spacer()
                                 }
                             }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 14)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
 
-                        Divider().padding(.horizontal, 16)
+                            Divider().padding(.horizontal, 20)
 
-                        HStack {
-                            Text("Total Paid")
-                                .font(.custom("Inter_18pt-Regular", size: 13))
-                                .foregroundColor(.textSecondary)
-                            Spacer()
-                            Text("LKR 1,800")
-                                .font(.custom("Inter_18pt-Black", size: 18))
-                                .foregroundColor(.primaryBlue)
+                            HStack {
+                                Text("Total Paid")
+                                    .font(.custom("Inter_18pt-Medium", size: 14))
+                                    .foregroundColor(.primaryBlue)
+                                Spacer()
+                                Text("LKR \(formattedAmount(1800))")
+                                    .font(.custom("Inter_18pt-Bold", size: 16))
+                                    .foregroundColor(.primaryBlue)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                            .padding(.top, 4)
                         }
+                        .background(Color.white)
+                        .cornerRadius(20)
+                        .shadow(color: .black.opacity(0.08), radius: 16, x: 0, y: 4)
                         .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
+                        .padding(.top, 24)
+
+                        Spacer().frame(height: 120)
                     }
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.white)
-                            .shadow(color: .black.opacity(0.08), radius: 16, x: 0, y: 4)
-                    )
-                    .padding(.horizontal, 20)
+                }
 
-                    // Go Home button
+                VStack(spacing: 12) {
                     Button { navigateHome = true } label: {
-                        Text("Go Home")
-                            .font(.custom("Inter_18pt-Bold", size: 16))
+                        Text("Go to Home")
+                            .font(.custom("Inter_18pt-SemiBold", size: 16))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 17)
-                            .background(LinearGradient.primaryGradient)
+                            .padding(.vertical, 16)
+                            .background(Color.primaryBlueDark)
                             .cornerRadius(14)
                     }
-                    .padding(.horizontal, 20)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(Color.white)
 
-                    Spacer().frame(height: 100)
+                BottomTabBar(selectedTab: $navTab, isNeutral: true) { tab in
+                    AppRouter.shared.pendingTab = tab
+                    if tab == .home {
+                        navigateHome = true
+                    } else {
+                        dismiss()
+                    }
                 }
             }
-
-            BottomTabBar(selectedTab: $navTab, isNeutral: true)
+            .ignoresSafeArea(edges: .top)
         }
         .ignoresSafeArea(edges: .bottom)
+        .preferredColorScheme(.dark)
         .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; navigateHome = true }
         .navigationDestination(isPresented: $navigateHome) {
@@ -717,37 +789,31 @@ struct LabPaymentSuccessView: View {
         }
     }
 
+    private func formattedAmount(_ amount: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = ","
+        return formatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
+    }
+
     private func receiptRow(icon: String, label: String, value: String) -> some View {
         HStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.system(size: 13))
-                .foregroundColor(.textSecondary)
-                .frame(width: 18)
+                .font(.system(size: 14))
+                .foregroundColor(.textTertiary)
+                .frame(width: 20)
             Text(label)
                 .font(.custom("Inter_18pt-Regular", size: 13))
                 .foregroundColor(.textSecondary)
-            Spacer()
             Text(value)
-                .font(.custom("Inter_18pt-SemiBold", size: 13))
+                .font(.custom("Inter_18pt-Medium", size: 13))
                 .foregroundColor(.textPrimary)
+            Spacer()
         }
     }
 }
 
 // MARK: - Lab Success Curve Shape
-private struct LabSuccessCurveShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - 60))
-        path.addQuadCurve(
-            to: CGPoint(x: 0, y: rect.maxY - 60),
-            control: CGPoint(x: rect.midX, y: rect.maxY + 44)
-        )
-        path.closeSubpath()
-        return path
-    }
-}
+// (removed — replaced with UnevenRoundedRectangle)
 
 
