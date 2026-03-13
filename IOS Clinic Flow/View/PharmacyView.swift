@@ -607,7 +607,7 @@ struct PharmacyPaymentView: View {
 
                 // Bottom bar
                 VStack(spacing: 0) {
-                    Divider()
+                    Rectangle().fill(Color.surfaceMuted).frame(height: 1)
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Selected (1)")
