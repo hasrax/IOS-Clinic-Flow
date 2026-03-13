@@ -119,22 +119,7 @@ struct LabView: View {
 
             VStack(spacing: 0) {
                 // Nav bar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
-                    Spacer()
-                    Text("Laboratory")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.textPrimary)
-                    Spacer()
-                    Spacer().frame(width: 38)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(title: "Laboratory", onBack: { dismiss() })
 
                 if router.isNewUser {
                     Spacer()
@@ -459,8 +444,7 @@ struct LabPaymentView: View {
                                 .cornerRadius(14)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(isLabFeeSelected ? Color.primaryBlue : Color.surfaceMuted,
-                                                lineWidth: isLabFeeSelected ? 2 : 1)
+                                        .stroke(Color.surfaceMuted, lineWidth: 1)
                                 )
                             }
                             .padding(.horizontal, 20)
@@ -534,7 +518,7 @@ struct LabPaymentView: View {
 
                 // Bottom bar
                 VStack(spacing: 0) {
-                    Divider()
+                    Rectangle().fill(Color.surfaceMuted).frame(height: 1)
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Selected (1)")
@@ -617,17 +601,11 @@ struct LabPaymentSuccessView: View {
                         // Blue header
                         VStack(spacing: 0) {
                             HStack {
-                                Button { dismiss() } label: {
-                                    Image(systemName: "chevron.left")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
                                 Spacer()
                                 Text("Payment")
                                     .font(.custom("Inter_18pt-Bold", size: 18))
                                     .foregroundColor(.white)
                                 Spacer()
-                                Color.clear.frame(width: 24, height: 24)
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 60)
@@ -785,7 +763,9 @@ struct LabPaymentSuccessView: View {
         .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; navigateHome = true }
         .navigationDestination(isPresented: $navigateHome) {
-            HomeView(isReturningUser: true).navigationBarBackButtonHidden(true)
+            HomeView(isReturningUser: true)
+                .preferredColorScheme(.light)
+                .navigationBarBackButtonHidden(true)
         }
     }
 

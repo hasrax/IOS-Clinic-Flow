@@ -12,7 +12,7 @@ internal import Combine
 private let mockCareForList: [CareForPerson] = [
     CareForPerson(
         id: 1, name: "Amal Perera", relation: "Father", age: 64,
-        phone: "+ xx xxx xxxx", avatar: "doctor_kamal",
+        phone: "+ xx xxx xxxx", avatar: "dad",
         conditions: ["Diabetes", "Hypertension"],
         lastVisit: "Last Feb 23, 2025",
         upcomingAppt: nil,
@@ -28,7 +28,7 @@ private let mockCareForList: [CareForPerson] = [
         ]
     ),
     CareForPerson(
-        id: 2, name: "Malithi Perera", relation: "Sister", age: 32,
+        id: 2, name: "  Roshel Perera", relation: "Sister", age: 32,
         phone: "+ xx xxx xxxx", avatar: "malini_avatar",
         conditions: [],
         lastVisit: "Last Feb 23, 2025",
@@ -40,7 +40,7 @@ private let mockCareForList: [CareForPerson] = [
 
 private let mockMyCompanions: [MyCompanion] = [
     MyCompanion(
-        id: 1, name: "Saman Perera", relation: "Son", avatar: "doctor_nipun",
+        id: 1, name: "Kevin Perera", relation: "Son", avatar: "son",
         phone: "+ xx xxx xxxx",
         permissions: ["Book appointments", "Track queue status"],
         linkedSince: "Jan 15, 2025", status: "active"
@@ -57,104 +57,89 @@ struct CompanionView: View {
     @State private var navigateToQueue: CareForPerson? = nil
     @State private var showAlertsView = false
     @State private var showQueueView = false
-    @State private var navTab: TabItem = .home
     @ObservedObject private var router = AppRouter.shared
     enum CompanionTab { case iCareFor, myCompanions, pending }
 
+    // FIXED: Use constant binding — neutral mode doesn't highlight any tab.
+    private var tabBinding: Binding<TabItem> {
+        .constant(.home)
+    }
+
     var body: some View {
-        //zstack layers the grey background
-        NavigationStack {
-            ZStack {
-                Color(hex: "F0F2F5").ignoresSafeArea()
-                //spacing stcks the nav bar , scrolling area and tab bar with gaps
-                VStack(spacing: 0) {
-                    // NavBar with plus button for add companion one
-                    HStack {
-                        Button { dismiss() } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.textPrimary)
-                        }
-                        Spacer()
-                        Text("Companion Mode")
+        // FIXED: Removed the inner NavigationStack.
+        // CompanionView is already pushed inside HomeView's NavigationStack,
+        // so having a second NavigationStack caused nested stack issues where
+        // dismiss() from child views would behave unpredictably.
+        // Now Alerts and Queue push onto HomeView's NavigationStack directly,
+        // so the back button correctly pops one level at a time.
+        ZStack {
+            Color(hex: "F0F2F5").ignoresSafeArea()
+            VStack(spacing: 0) {
+                NavBar(
+                    title: "Companion Mode",
+                    onBack: { dismiss() },
+                    trailingIcon: "plus",
+                    trailingStyle: .boxed,
+                    onTrailing: { showAddCompanion = true },
+                    backColor: .textPrimary,
+                    titleColor: .textPrimary,
+                    backgroundColor: Color(hex: "F0F2F5")
+                )
+
+                if router.isNewUser {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        Image(systemName: "person.2.fill")
+                            .font(.system(size: 52))
+                            .foregroundColor(Color(hex: "D8DCE6"))
+                        Text("No companions yet")
                             .font(.custom("Inter_18pt-Bold", size: 18))
                             .foregroundColor(.textPrimary)
-                        Spacer()
-                        Button {
-                            showAddCompanion = true
-                        } label: {
-                            //wrapped in this for rounded borders
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.borderMedium, lineWidth: 1)
-                                    .frame(width: 34, height: 34)
-                                Image(systemName: "plus")
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundColor(.textPrimary)
-                            }
-                        }
+                        Text("Add family members or caregivers\nto track their visits together")
+                            .font(.custom("Inter_18pt-Regular", size: 14))
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 14)
-                    .background(Color(hex: "F0F2F5"))
-
-                    if router.isNewUser {
-                        Spacer()
+                    Spacer()
+                } else {
+                    ScrollView(showsIndicators: false) {
                         VStack(spacing: 16) {
-                            Image(systemName: "person.2.fill")
-                                .font(.system(size: 52))
-                                .foregroundColor(Color(hex: "D8DCE6"))
-                            Text("No companions yet")
-                                .font(.custom("Inter_18pt-Bold", size: 18))
-                                .foregroundColor(.textPrimary)
-                            Text("Add family members or caregivers\nto track their visits together")
-                                .font(.custom("Inter_18pt-Regular", size: 14))
-                                .foregroundColor(.textSecondary)
-                                .multilineTextAlignment(.center)
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView(showsIndicators: false) {
-                            VStack(spacing: 16) {
-                        
-                                infoBanner
+                    
+                            infoBanner
 
-                                tabPills
+                            tabPills
 
-                                switch selectedTab {
-                                case .iCareFor: iCareForContent
-                                case .myCompanions: myCompanionsContent
-                                case .pending: pendingContent
-                                }
+                            switch selectedTab {
+                            case .iCareFor: iCareForContent
+                            case .myCompanions: myCompanionsContent
+                            case .pending: pendingContent
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 30)
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 30)
                     }
+                }
 
-                    BottomTabBar(selectedTab: $navTab, isNeutral: true)
-                }
+                BottomTabBar(selectedTab: tabBinding, isNeutral: true)
             }
-            .ignoresSafeArea(edges: .bottom)
-            .navigationBarHidden(true)
-            //to show alerts screen- naviagtions to other screens
-            .navigationDestination(isPresented: $showAlertsView) {
-                if let person = navigateToAlerts {
-                    CompanionAlertsView(person: person)
-                }
+        }
+        .ignoresSafeArea(edges: .bottom)
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+        // These now push onto HomeView's NavigationStack (no nested stack)
+        .navigationDestination(isPresented: $showAlertsView) {
+            if let person = navigateToAlerts {
+                CompanionAlertsView(person: person)
             }
-            .navigationDestination(isPresented: $showQueueView) {
-                if let person = navigateToQueue {
-                    CompanionQueueView(person: person)
-                }
+        }
+        .navigationDestination(isPresented: $showQueueView) {
+            if let person = navigateToQueue {
+                CompanionQueueView(person: person)
             }
         }
         .sheet(isPresented: $showAddCompanion) {
             AddCompanionSheet(isPresented: $showAddCompanion)
         }
-        .navigationBarHidden(true)
-        .onAppear { if AppRouter.shared.pendingTab != nil { dismiss() } }
-        .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
     // MARK: blue info banner
@@ -191,13 +176,12 @@ struct CompanionView: View {
             tabPill(title: "My Companions", tab: .myCompanions)
             tabPillPending
         }
-        .padding(4)// to not touch container
+        .padding(4)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
     }
 
-    //this is to show the functions of tab pills
     private func tabPill(title: String, tab: CompanionTab) -> some View {
         Button { selectedTab = tab } label: {
             Text(title)
@@ -207,8 +191,8 @@ struct CompanionView: View {
                 .padding(.vertical, 9)
                 .background(
                     selectedTab == tab
-                        ? AnyView(LinearGradient.primaryGradient)//active
-                        : AnyView(Color.clear)//inactive
+                        ? AnyView(LinearGradient.primaryGradient)
+                        : AnyView(Color.clear)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 9))
         }
@@ -249,13 +233,10 @@ struct CompanionView: View {
         }
     }
     
-    //card design
     private func careForCard(person: CareForPerson) -> some View {
         VStack(spacing: 0) {
-            // Top section
             VStack(spacing: 12) {
                 HStack(spacing: 12) {
-                    // Avatar
                     ZStack {
                         Circle()
                             .fill(Color.primaryBlueTint)
@@ -275,13 +256,11 @@ struct CompanionView: View {
                             .foregroundColor(.textSecondary)
                     }
                     Spacer()
-                    // Status dot
                     Circle()
                         .fill(person.queueData != nil ? Color.successGreen : Color.warningAmber)
                         .frame(width: 10, height: 10)
                 }
 
-                // Condition tags
                 if !person.conditions.isEmpty {
                     HStack(spacing: 8) {
                         ForEach(person.conditions, id: \.self) { cond in
@@ -340,7 +319,6 @@ struct CompanionView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
 
-                // Info rows
                 VStack(spacing: 8) {
                     HStack(spacing: 8) {
                         Image(systemName: "phone")
@@ -366,7 +344,6 @@ struct CompanionView: View {
 
             Divider().padding(.horizontal, 16)
 
-            // Action buttons
             HStack(spacing: 0) {
                 companionActionBtn(icon: "phone.fill", label: "Call") {}
                 companionActionBtn(icon: "location.fill", label: "Track") {
@@ -588,7 +565,6 @@ struct CompanionView: View {
 }
 
 // MARK: - Add Companion Sheet
-//bottoon sliding sheet to add new companions
 struct AddCompanionSheet: View {
     @Binding var isPresented: Bool
     @State private var fullName = ""
@@ -603,7 +579,6 @@ struct AddCompanionSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             HStack {
                 Text("Add Companion")
                     .font(.custom("Inter_18pt-Bold", size: 20))
@@ -626,7 +601,6 @@ struct AddCompanionSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
-                    // name entering section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Full Name")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -640,7 +614,6 @@ struct AddCompanionSheet: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // contact number entering section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Phone Number")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -655,7 +628,6 @@ struct AddCompanionSheet: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
-                    // Relationship two boxes
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Relationship")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -689,7 +661,6 @@ struct AddCompanionSheet: View {
                         }
                     }
 
-                    // Link cards
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Link Type")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -710,7 +681,6 @@ struct AddCompanionSheet: View {
                         }
                     }
 
-                    // read only permissions
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Permissions")
                             .font(.custom("Inter_18pt-Medium", size: 14))
@@ -729,7 +699,6 @@ struct AddCompanionSheet: View {
                         }
                     }
 
-                    // Button
                     Button {
                         isPresented = false
                     } label: {
@@ -749,7 +718,6 @@ struct AddCompanionSheet: View {
         .background(Color(hex: "F0F2F5"))
     }
 
-    //link type selection
     private func linkTypeCard(icon: String, title: String, subtitle: String, type: LinkType) -> some View {
         Button { linkType = type } label: {
             VStack(spacing: 8) {
@@ -777,4 +745,3 @@ struct AddCompanionSheet: View {
         }
     }
 }
-

@@ -68,22 +68,7 @@ struct PharmacyView: View {
 
             VStack(spacing: 0) {
                 // Nav bar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
-                    Spacer()
-                    Text("Pharmacy")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.textPrimary)
-                    Spacer()
-                    Spacer().frame(width: 38)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(title: "Pharmacy", onBack: { dismiss() })
 
                 // Tab selector
                 HStack(spacing: 0) {
@@ -538,8 +523,7 @@ struct PharmacyPaymentView: View {
                                 .cornerRadius(14)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(isFeeSelected ? Color.primaryBlue : Color.surfaceMuted,
-                                                lineWidth: isFeeSelected ? 2 : 1)
+                                        .stroke(Color.surfaceMuted, lineWidth: 1)
                                 )
                             }
                             .padding(.horizontal, 20)
@@ -608,7 +592,7 @@ struct PharmacyPaymentView: View {
 
                 // Bottom bar
                 VStack(spacing: 0) {
-                    Divider()
+                    Rectangle().fill(Color.surfaceMuted).frame(height: 1)
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Selected (1)")
@@ -690,17 +674,11 @@ struct PharmacyPaymentSuccessView: View {
                         VStack(spacing: 0) {
                             // Nav row
                             HStack {
-                                Button { dismiss() } label: {
-                                    Image(systemName: "chevron.left")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
                                 Spacer()
                                 Text("Payment")
                                     .font(.custom("Inter_18pt-Bold", size: 18))
                                     .foregroundColor(.white)
                                 Spacer()
-                                Color.clear.frame(width: 24, height: 24)
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 60)
@@ -863,7 +841,9 @@ struct PharmacyPaymentSuccessView: View {
         .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; navigateHome = true }
         .navigationDestination(isPresented: $navigateHome) {
-            HomeView(isReturningUser: true).navigationBarBackButtonHidden(true)
+            HomeView(isReturningUser: true)
+                .preferredColorScheme(.light)
+                .navigationBarBackButtonHidden(true)
         }
     }
 

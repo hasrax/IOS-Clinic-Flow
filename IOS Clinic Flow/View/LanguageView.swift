@@ -53,7 +53,7 @@ struct LanguageView: View {
                     .frame(height: 320)
 
                     // Welcome text section
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .center, spacing: 4) {
                         Text("WELCOME !")
                             .font(.custom("Inter_18pt-ExtraBold", size: 24))
                             .foregroundColor(.textPrimary)
@@ -61,7 +61,7 @@ struct LanguageView: View {
                             .font(.custom("Inter_18pt-Regular", size: 14))
                             .foregroundColor(.textSecondary)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal, 28)
                     .padding(.bottom, 24)
 

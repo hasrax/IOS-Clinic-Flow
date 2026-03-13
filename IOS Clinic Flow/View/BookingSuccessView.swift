@@ -48,17 +48,11 @@ struct BookingSuccessView: View {
                         VStack(spacing: 0) {
                             // Nav row
                             HStack {
-                                Button { dismiss() } label: {
-                                    Image(systemName: "chevron.left")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
                                 Spacer()
                                 Text(isPaid ? "Payment" : "Booking")
                                     .font(.custom("Inter_18pt-Bold", size: 18))
                                     .foregroundColor(.white)
                                 Spacer()
-                                Color.clear.frame(width: 24, height: 24)
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 60)
@@ -219,6 +213,7 @@ struct BookingSuccessView: View {
         }
         .navigationDestination(isPresented: $navigateToHome) {
             HomeView(isReturningUser: true)
+                .preferredColorScheme(.light)
                 .navigationBarBackButtonHidden(true)
         }
     }

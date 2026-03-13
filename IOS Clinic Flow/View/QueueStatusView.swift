@@ -42,23 +42,14 @@ struct QueueStatusView: View {
                         // ── Header info area ──
                         VStack(spacing: 0) {
                             // Custom nav row
-                            HStack {
-                                Button { dismiss() } label: {
-                                    Image(systemName: "chevron.left")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
-                                Spacer()
-                                Text("Queue Status")
-                                    .font(.custom("Inter_18pt-Bold", size: 18))
-                                    .foregroundColor(.white)
-                                Spacer()
-                                // balance spacer so title stays centred
-                                Color.clear.frame(width: 24, height: 24)
-                            }
-                            .padding(.horizontal, 24)
-                            .padding(.top, 60)
-                            .padding(.bottom, 8)
+                            NavBar(
+                                title: "Queue Status",
+                                onBack: { dismiss() },
+                                backColor: .white,
+                                titleColor: .white,
+                                backgroundColor: .clear
+                            )
+                            .padding(.top, 44)
 
                             // a more detail and indepth version of the live status update that we pout in the home view
                             HStack {

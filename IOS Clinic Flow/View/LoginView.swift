@@ -76,7 +76,7 @@ struct LoginView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     
                     // Heading text
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .center, spacing: 8) {
                         Text("HI, WELCOME BACK")
                             .font(.custom("Inter_18pt-Bold", size: 26))
                             .foregroundColor(Color(hex: "1B2D6B"))
@@ -85,6 +85,7 @@ struct LoginView: View {
                             .font(.custom("Inter_18pt-Regular", size: 14))
                             .foregroundColor(Color(hex: "8A93A6"))
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 36)
                     .padding(.horizontal, 32)
                     

@@ -49,32 +49,13 @@ struct CalendarView: View {
             Color.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Custom nav bar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
-                    }
-                    Spacer()
-                    Text("Calendar")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.textPrimary)
-                    Spacer()
-                    Button { } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.textPrimary)
-                            .frame(width: 30, height: 30)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color(hex: "D1D5DB"), lineWidth: 1.5)
-                            )
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(
+                    title: "Calendar",
+                    onBack: { dismiss() },
+                    trailingIcon: "plus",
+                    trailingStyle: .boxed,
+                    onTrailing: {}
+                )
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {

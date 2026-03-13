@@ -56,19 +56,7 @@ struct ProfileView: View {
             Color.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                //NavBar
-                HStack {
-                    Spacer().frame(width: 44)
-                    Spacer()
-                    Text("Profile")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.primaryBlue)
-                    Spacer()
-                    Spacer().frame(width: 44)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(title: "Profile", titleColor: .primaryBlue)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
