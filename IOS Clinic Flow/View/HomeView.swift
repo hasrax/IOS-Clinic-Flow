@@ -116,6 +116,7 @@ struct HomeView: View {
             .navigationDestination(isPresented: $showCalendar) {
                 CalendarView()
             }
+            .preferredColorScheme(.light)
             .onAppear {
                 if AppRouter.shared.isNewUser && newUserPhone.isEmpty {
                     newUserPhone = "+94 \(AppRouter.shared.loggedInPhone)"
@@ -171,7 +172,7 @@ struct HomeHeaderView: View {
                         .font(.custom("Inter_18pt-Bold", size: 16))
                         .foregroundColor(.textPrimary)
                 } else {
-                    Text("Malini Perera")
+                    Text("Melisha Perera")
                         .font(.custom("Inter_18pt-Bold", size: 16))
                         .foregroundColor(.textPrimary)
                 }
@@ -964,10 +965,10 @@ struct CalendarSection: View {
                         .foregroundColor(Color(hex: "D97706"))
                 }
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Dr. Nimal Fernando")
+                    Text("Dr. Prasad Pathirana")
                         .font(.custom("Inter_18pt-Bold", size: 15))
                         .foregroundColor(.textPrimary)
-                    Text("Cardiology . 10:00 AM")
+                    Text("Ophthalmologist . 2:30 PM")
                         .font(.custom("Inter_18pt-Regular", size: 12))
                         .foregroundColor(.textSecondary)
                 }

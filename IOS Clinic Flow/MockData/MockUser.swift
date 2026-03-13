@@ -6,7 +6,7 @@ import Foundation
 
 struct MockUser {
     static let current = Patient(
-        name: "Malini Hasra",
+        name: "Melisha Perera",
         phone: "+94 77 123 4567",
         bloodType: "O+",
         age: 34,

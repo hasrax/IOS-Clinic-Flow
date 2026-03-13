@@ -10,7 +10,13 @@ import SwiftUI
 struct CompanionAlertsView: View {
     @Environment(\.dismiss) private var dismiss
     let person: CareForPerson
-    @State private var navTab: TabItem = .home
+
+    // FIXED: Use a constant binding since we're in neutral mode (no tab highlighted).
+    // Tab navigation is handled entirely by the BottomTabBar's neutral mode,
+    // which sets pendingTab + dismiss. No onChange needed here.
+    private var tabBinding: Binding<TabItem> {
+        .constant(.home)
+    }
 
     private func alertIcon(type: String) -> (String, Color) {
         switch type {
@@ -27,29 +33,12 @@ struct CompanionAlertsView: View {
             Color(hex: "F0F2F5").ignoresSafeArea()
             VStack(spacing: 0) {
                 // NavBar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
-                    Spacer()
-                    VStack(spacing: 2) {
-                        Text(person.name)
-                            .font(.custom("Inter_18pt-Bold", size: 17))
-                            .foregroundColor(.textPrimary)
-                        Text("Alerts")
-                            .font(.custom("Inter_18pt-Regular", size: 12))
-                            .foregroundColor(.textSecondary)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16))
-                        .opacity(0)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color(hex: "F0F2F5"))
+                NavBar(
+                    title: person.name,
+                    subtitle: "Alerts",
+                    onBack: { dismiss() },
+                    backgroundColor: Color(hex: "F0F2F5")
+                )
 
                 //show and empty state
                 if person.alerts.isEmpty {
@@ -75,13 +64,14 @@ struct CompanionAlertsView: View {
                     }
                 }
 
-                BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                // FIXED: neutral mode — back button goes to CompanionView,
+                // tab buttons navigate to the correct tab via pendingTab + dismiss chain.
+                BottomTabBar(selectedTab: tabBinding, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; dismiss() }
     }
 
     // single row that shows the details
@@ -112,5 +102,3 @@ struct CompanionAlertsView: View {
         .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
     }
 }
-
-

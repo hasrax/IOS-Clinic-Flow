@@ -210,7 +210,9 @@ struct CashCounterView: View {
         .preferredColorScheme(.dark) // white status bar icons over blue header
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; navigateHome = true }
         .navigationDestination(isPresented: $navigateHome) {
-            HomeView(isReturningUser: true).navigationBarBackButtonHidden(true)
+            HomeView(isReturningUser: true)
+                .preferredColorScheme(.light)
+                .navigationBarBackButtonHidden(true)
         }
     }
 

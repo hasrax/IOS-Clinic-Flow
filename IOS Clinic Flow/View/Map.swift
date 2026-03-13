@@ -2,16 +2,6 @@
 //  MapView.swift  — UX Redesign v3
 //  IOS Clinic Flow
 //
-//  v3 changes:
-//    • Map shows PHOTO ONLY — no grid, no room rectangles
-//    • Rooms rendered as Google-Maps-style icon + label bubble pins
-//    • From pin = blue filled bubble, To pin = green filled bubble
-//    • Inactive pins = white card bubble with category icon
-//    • Animated dashed path drawn between pin positions
-//    • Photo displayed vertically (portrait) — full width, height = width * 1.25
-//    • Pin positions (x, y) are normalised 0–1 relative to photo size
-//    • Adjust RoomInfo x/y values to match room locations in your actual photo
-//
 
 import SwiftUI
 
@@ -27,7 +17,7 @@ extension Color {
     static let warningText    = Color(hex: "F59E0B")
 }
 
-// MARK: - Room category (colour + icon only — no fill rectangles)
+// MARK: - Room category
 private enum RoomCategory {
     case entry, services, diagnostic, clinical, critical, surgical, support
 
@@ -52,13 +42,11 @@ private enum RoomCategory {
     }}
 }
 
-// MARK: - Room model (pin-based, no width/height — just a point on the map)
+// MARK: - Room model
 private struct RoomInfo: Identifiable {
     let id = UUID()
     let name: String
-    /// Normalised x position: 0.0 = left edge, 1.0 = right edge of photo
     let x: CGFloat
-    /// Normalised y position: 0.0 = top edge, 1.0 = bottom edge of photo
     let y: CGFloat
     var category: RoomCategory = .clinical
     var isEntrance: Bool = false
@@ -68,7 +56,7 @@ private struct RoomInfo: Identifiable {
 private struct RouteDefinition {
     let from: String
     let to:   String
-    let waypoints: [CGPoint]   // normalised 0–1
+    let waypoints: [CGPoint]
     let steps: [String]
 }
 
@@ -83,7 +71,7 @@ private struct FloorData {
     let mapAssetName: String?
 }
 
-// MARK: - Dynamic routing (L-shaped corridor path)
+// MARK: - Dynamic routing
 private func dynamicRoute(from f: RoomInfo, to t: RoomInfo) -> RouteDefinition {
     let spineY: CGFloat = (f.y + t.y) / 2
     let waypoints: [CGPoint] = [
@@ -119,9 +107,6 @@ private func findRoute(floor: FloorData, from: String, to: String) -> RouteDefin
 }
 
 // MARK: - Floor definitions
-// ⚠️  Adjust x/y pin positions to match room locations in your actual map photo.
-//     x=0 is the LEFT edge, x=1 is the RIGHT edge.
-//     y=0 is the TOP edge,  y=1 is the BOTTOM edge.
 private let floorData: [FloorData] = [
     FloorData(
         floor: 1, floorName: "Outpatient",
@@ -186,7 +171,7 @@ private struct AnimatedRoute: View {
     }
 }
 
-// MARK: - Triangle shape (pin pointer)
+// MARK: - Triangle shape
 private struct Triangle: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
@@ -198,7 +183,7 @@ private struct Triangle: Shape {
     }
 }
 
-// MARK: - Room pin (bubble + pointer triangle)
+// MARK: - Room pin
 private struct RoomPin: View {
     let room: RoomInfo
     let isFrom: Bool
@@ -222,14 +207,12 @@ private struct RoomPin: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Bubble
             HStack(spacing: 5) {
                 Image(systemName: isFrom ? "location.fill"
                                  : isDest ? "mappin.circle.fill"
                                  : room.category.icon)
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(iconColor)
-
                 Text(room.name)
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(labelColor)
@@ -246,12 +229,10 @@ private struct RoomPin: View {
             )
             .shadow(color: shadowColor, radius: (isFrom || isDest) ? 6 : 3, x: 0, y: 2)
 
-            // Pointer
             Triangle()
                 .fill(bubbleColor)
                 .frame(width: 10, height: 6)
         }
-        // Offset so the triangle tip rests exactly at (position)
         .position(x: position.x, y: position.y - 22)
         .scaleEffect((isFrom || isDest) ? 1.12 : 1.0)
         .animation(.spring(response: 0.25), value: isFrom || isDest)
@@ -534,34 +515,17 @@ struct ClinicMapView: View {
     private var floor: FloorData { floorData[selectedFloor] }
     private var allRoomNames: [String] { floor.rooms.map(\.name) }
 
-    // Portrait map height relative to screen width
-    private let mapAspect: CGFloat = 1.25
+    // FIXED: Use a constant binding — neutral mode doesn't highlight any tab,
+    // and tapping a tab sets pendingTab + dismiss() to navigate properly.
+    private var tabBinding: Binding<TabItem> {
+        .constant(.home)
+    }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             Color.appBackground.ignoresSafeArea()
-
             VStack(spacing: 0) {
-                // Nav bar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold)).foregroundColor(.textPrimary)
-                            .frame(width: 36, height: 36).background(Color.white).cornerRadius(10)
-                            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 1)
-                    }
-                    Spacer()
-                    VStack(spacing: 1) {
-                        Text("Clinic Navigation")
-                            .font(.custom("Inter_18pt-Bold", size: 17)).foregroundColor(.textPrimary)
-                        Text("Floor \(selectedFloor + 1) · \(floor.rooms.count) rooms")
-                            .font(.custom("Inter_18pt-Regular", size: 11)).foregroundColor(.textSecondary)
-                    }
-                    Spacer()
-                    Color.clear.frame(width: 36, height: 36)
-                }
-                .padding(.horizontal, 20).padding(.vertical, 12)
-                .background(Color.appBackground)
+                NavBar(title: "Clinic Navigation", onBack: { dismiss() })
 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 12) {
@@ -604,21 +568,24 @@ struct ClinicMapView: View {
                         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
                         .padding(.horizontal, 16)
 
-                        // ── MAP ─────────────────────────────────────────────────────────
-                        let mapW = UIScreen.main.bounds.width - 32   // account for horizontal padding
-                        let mapH = mapW * mapAspect
+                        // ── MAP ──
+                        let photoAspect: CGFloat = {
+                            if let img = UIImage(named: floor.mapAssetName ?? "") {
+                                return img.size.height / img.size.width
+                            }
+                            return 1.25
+                        }()
+                        let mapW = UIScreen.main.bounds.width - 32
+                        let mapH = mapW * photoAspect
 
                         ZStack {
-                            // Photo or fallback background
                             if let assetName = floor.mapAssetName,
                                UIImage(named: assetName) != nil {
                                 Image(assetName)
                                     .resizable()
-                                    .scaledToFill()
-                                    .frame(width: mapW, height: mapH)
-                                    .clipped()
+                                    .scaledToFit()
+                                    .frame(width: mapW)
                             } else {
-                                // Fallback: subtle grid for floors without a photo
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(Color(hex: "EEF2FF"))
                                 Canvas { ctx, size in
@@ -635,24 +602,19 @@ struct ClinicMapView: View {
                                 }
                             }
 
-                            // Route path (drawn under pins)
                             if let route = activeRoute {
                                 routeOverlay(route: route, w: mapW, h: mapH)
                             }
 
-                            // Room pins
                             ForEach(floor.rooms) { room in
                                 let px = room.x * mapW
                                 let py = room.y * mapH
-
                                 RoomPin(
                                     room: room,
                                     isFrom: room.name == fromText,
                                     isDest: room.name == toText,
                                     position: CGPoint(x: px, y: py)
                                 )
-
-                                // Transparent hit target over pin
                                 Color.clear
                                     .frame(width: 50, height: 50)
                                     .position(x: px, y: py)
@@ -664,7 +626,6 @@ struct ClinicMapView: View {
                         .shadow(color: Color.primaryBlue.opacity(0.10), radius: 16, x: 0, y: 6)
                         .padding(.horizontal, 16)
 
-                        // Directions card
                         if let route = activeRoute {
                             DirectionsCard(route: route, activeStep: $activeStep, isExpanded: $directionsExpanded)
                                 .padding(.horizontal, 16)
@@ -681,6 +642,11 @@ struct ClinicMapView: View {
                     }
                     .padding(.top, 8)
                 }
+
+                // FIXED: Use neutral mode — no tab is highlighted, and tapping
+                // any tab sets AppRouter.pendingTab + dismisses this view,
+                // so RootView picks it up and switches to the correct tab.
+                BottomTabBar(selectedTab: tabBinding, isNeutral: true)
             }
         }
         .ignoresSafeArea(edges: .bottom)
@@ -693,7 +659,6 @@ struct ClinicMapView: View {
         }
     }
 
-    // MARK: - Route overlay
     @ViewBuilder
     private func routeOverlay(route: RouteDefinition, w: CGFloat, h: CGFloat) -> some View {
         let pts = route.waypoints.map { CGPoint(x: $0.x * w, y: $0.y * h) }
@@ -711,7 +676,6 @@ struct ClinicMapView: View {
         }
     }
 
-    // MARK: - Tap handler
     private func handleRoomTap(_ name: String) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             if fromText.isEmpty || fromText == name {
@@ -724,7 +688,6 @@ struct ClinicMapView: View {
         }
     }
 
-    // MARK: - Resolve route
     private func resolveRoute() {
         withAnimation(.easeInOut(duration: 0.3)) {
             activeRoute = findRoute(floor: floor, from: fromText, to: toText)
@@ -733,7 +696,6 @@ struct ClinicMapView: View {
         }
     }
 
-    // MARK: - Swap
     private func swapRoute() {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             let tmp = fromText; fromText = toText; toText = tmp
@@ -744,4 +706,4 @@ struct ClinicMapView: View {
 
 #Preview {
     NavigationStack { ClinicMapView() }
-} 
+}

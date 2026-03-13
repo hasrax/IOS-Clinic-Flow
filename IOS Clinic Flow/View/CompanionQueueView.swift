@@ -21,7 +21,11 @@ private struct CQStep {
 struct CompanionQueueView: View {
     @Environment(\.dismiss) private var dismiss
     let person: CareForPerson
-    @State private var navTab: TabItem = .home
+
+    // Use constant binding — neutral mode doesn't highlight any tab.
+    private var tabBinding: Binding<TabItem> {
+        .constant(.home)
+    }
 
     private func steps(for queue: CompanionQueueData) -> [CQStep] {
         [
@@ -43,28 +47,16 @@ struct CompanionQueueView: View {
                         VStack(spacing: 0) {
 
                             VStack(spacing: 0) {
-                                // Custom nav row
-                                HStack {
-                                    Button { dismiss() } label: {
-                                        Image(systemName: "chevron.left")
-                                            .font(.system(size: 17, weight: .semibold))
-                                            .foregroundColor(.white)
-                                    }
-                                    Spacer()
-                                    VStack(spacing: 1) {
-                                        Text("Queue Status")
-                                            .font(.custom("Inter_18pt-Bold", size: 18))
-                                            .foregroundColor(.white)
-                                        Text(person.name)
-                                            .font(.custom("Inter_18pt-Regular", size: 12))
-                                            .foregroundColor(.white.opacity(0.75))
-                                    }
-                                    Spacer()
-                                    Color.clear.frame(width: 24, height: 24)
-                                }
-                                .padding(.horizontal, 24)
-                                .padding(.top, 60)
-                                .padding(.bottom, 8)
+                                NavBar(
+                                    title: "Queue Status",
+                                    subtitle: person.name,
+                                    onBack: { dismiss() },
+                                    backColor: .white,
+                                    titleColor: .white,
+                                    subtitleColor: .white.opacity(0.75),
+                                    backgroundColor: .clear
+                                )
+                                .padding(.top, 44)
 
                                 //live indicator
                                 HStack {
@@ -198,10 +190,10 @@ struct CompanionQueueView: View {
                         .padding(.vertical, 16)
                         .background(Color.white)
 
-                        BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                        BottomTabBar(selectedTab: tabBinding, isNeutral: true)
                     }
                 } else {
-                    // No queue data, still show bottom bar
+                    // No queue data
                     Spacer()
                     VStack(spacing: 12) {
                         Image(systemName: "person.crop.circle.badge.clock")
@@ -217,17 +209,14 @@ struct CompanionQueueView: View {
 
                     VStack(spacing: 0) {
                         Rectangle().fill(Color.surfaceMuted).frame(height: 1)
-                        BottomTabBar(selectedTab: $navTab, isNeutral: true)
+                        BottomTabBar(selectedTab: tabBinding, isNeutral: true)
                     }
                 }
             }
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
-        .onChange(of: navTab) { _, tab in
-            AppRouter.shared.pendingTab = tab
-            dismiss()
-        }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -238,26 +227,21 @@ private struct CQStepCard: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            //state icon
             ZStack {
                 switch step.state {
                 case .done:
-                    //green circle with the checkmark
                     Circle().fill(Color.successGreen).frame(width: 38, height: 38)
                     Image(systemName: "checkmark")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white)
                 case .active:
-                    //blue circle with white dot
                     Circle().fill(Color.primaryBlue).frame(width: 38, height: 38)
                     Circle().fill(Color.white).frame(width: 12, height: 12)
                 case .pending:
-                    //grey circle
                     Circle().stroke(Color(hex: "D1D5DB"), lineWidth: 2).frame(width: 38, height: 38)
                 }
             }
 
-            //title
             VStack(alignment: .leading, spacing: 6) {
                 Text(step.title)
                     .font(.custom("Inter_18pt-SemiBold", size: 14))
@@ -265,7 +249,6 @@ private struct CQStepCard: View {
                         step.state == .done   ? .successGreen :
                         step.state == .active ? .primaryBlue  : .textPrimary
                     )
-                //date
                 HStack(spacing: 18) {
                     HStack(spacing: 5) {
                         Image(systemName: "calendar")
@@ -273,7 +256,6 @@ private struct CQStepCard: View {
                         Text(step.date)
                             .font(.custom("Inter_18pt-Regular", size: 12)).foregroundColor(.textSecondary)
                     }
-                    //time
                     HStack(spacing: 5) {
                         Image(systemName: "clock")
                             .font(.system(size: 11)).foregroundColor(.textTertiary)
@@ -290,4 +272,3 @@ private struct CQStepCard: View {
         .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
     }
 }
-

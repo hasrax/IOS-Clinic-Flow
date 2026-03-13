@@ -39,22 +39,7 @@ struct BookingSearchView: View {
             //sets color to bgc
             VStack(spacing: 0) {
                 // Custom nav bar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
-                    Spacer()
-                    Text("Book Appointment")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.textPrimary)
-                    Spacer()
-                    Color.clear.frame(width: 24, height: 24)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(title: "Book Appointment", onBack: { dismiss() })
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {

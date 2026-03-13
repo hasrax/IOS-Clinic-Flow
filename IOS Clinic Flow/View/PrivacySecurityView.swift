@@ -23,22 +23,12 @@ struct PrivacySecurityView: View {
 
             VStack(spacing: 0) {
                 //NavBar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
-                    Spacer()
-                    Text("Privacy & Security")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.primaryBlue)
-                    Spacer()
-                    Color.clear.frame(width: 24, height: 24)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(
+                    title: "Privacy & Security",
+                    onBack: { dismiss() },
+                    backColor: .primaryBlue,
+                    titleColor: .primaryBlue
+                )
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {

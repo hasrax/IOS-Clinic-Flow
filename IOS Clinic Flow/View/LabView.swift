@@ -119,22 +119,7 @@ struct LabView: View {
 
             VStack(spacing: 0) {
                 // Nav bar
-                HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.primaryBlue)
-                    }
-                    Spacer()
-                    Text("Laboratory")
-                        .font(.custom("Inter_18pt-Bold", size: 18))
-                        .foregroundColor(.textPrimary)
-                    Spacer()
-                    Spacer().frame(width: 38)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(Color.appBackground)
+                NavBar(title: "Laboratory", onBack: { dismiss() })
 
                 if router.isNewUser {
                     Spacer()
@@ -616,17 +601,11 @@ struct LabPaymentSuccessView: View {
                         // Blue header
                         VStack(spacing: 0) {
                             HStack {
-                                Button { dismiss() } label: {
-                                    Image(systemName: "chevron.left")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
                                 Spacer()
                                 Text("Payment")
                                     .font(.custom("Inter_18pt-Bold", size: 18))
                                     .foregroundColor(.white)
                                 Spacer()
-                                Color.clear.frame(width: 24, height: 24)
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 60)
@@ -784,7 +763,9 @@ struct LabPaymentSuccessView: View {
         .navigationBarHidden(true)
         .onChange(of: navTab) { _, tab in AppRouter.shared.pendingTab = tab; navigateHome = true }
         .navigationDestination(isPresented: $navigateHome) {
-            HomeView(isReturningUser: true).navigationBarBackButtonHidden(true)
+            HomeView(isReturningUser: true)
+                .preferredColorScheme(.light)
+                .navigationBarBackButtonHidden(true)
         }
     }
 
